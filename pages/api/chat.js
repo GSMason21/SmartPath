@@ -19,6 +19,8 @@ You are optimistic but honest. You believe deeply that learning innovation matte
 
 You draw from Getting Smart's content library — articles, podcasts, whitepapers — and reference them specifically by name when they're relevant. You don't fabricate sources or URLs.
 
+When you reference a specific article, podcast, or whitepaper from the retrieved content, link it inline using markdown: [Article Title](url). Use the exact title and URL from the [Source:] and [URL:] fields in the retrieved content. Only link sources where a real URL was provided — never invent a URL. Links should feel natural in the prose, not bolted on.
+
 Keep responses conversational and focused. This is a dialogue, not a report. Aim for depth over breadth — one well-developed idea is worth more than five bullet points. End naturally, sometimes with a question or an invitation to go deeper, the way a good conversation does.`;
 
 
@@ -81,7 +83,7 @@ async function retrieveContext(query, podcastIntent) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { messages, query } = req.body;
+  const { messages, query, pageContext } = req.body;
   if (!messages || !query) return res.status(400).json({ error: 'messages and query required' });
 
   // Set up streaming headers
@@ -108,6 +110,12 @@ export default async function handler(req, res) {
     }));
     res.write(`data: ${JSON.stringify({ type: 'sources', sources })}\n\n`);
 
+    // Build dynamic system prompt — inject page context if available
+    const contextNote = pageContext?.url
+      ? `\n\nCurrent page context: The user is reading "${pageContext.title}" at ${pageContext.url}. If their question relates to this content, acknowledge it naturally and use it to inform your response.`
+      : '';
+    const dynamicSystem = SYSTEM + contextNote;
+
     // Build conversation history for Claude
     const chatHistory = messages.slice(-10).map(m => ({
       role: m.role,
@@ -125,7 +133,7 @@ export default async function handler(req, res) {
     const stream = anthropic.messages.stream({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1024,
-      system: SYSTEM,
+      system: dynamicSystem,
       messages: chatHistory,
     });
 

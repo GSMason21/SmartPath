@@ -10,6 +10,41 @@ const SOURCE_TYPES = {
   article:    { color: '#1a7a4a', bg: '#EEFAF5', label: 'Article' },
 };
 
+// Parse markdown links [title](url) into anchor tags
+function renderText(text) {
+  const parts = [];
+  const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = linkRegex.exec(text)) !== null) {
+    // Text before the link
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    // The link itself
+    parts.push(
+      <a
+        key={match.index}
+        href={match[2]}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.inlineLink}
+      >
+        {match[1]}
+      </a>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Remaining text
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : text;
+}
+
 const SUGGESTED = [
   'What does research say about student agency?',
   'How are schools using AI to support teachers?',
@@ -54,7 +89,12 @@ function Message({ message }) {
           </div>
         )}
         <div className={styles.messageText}>
-          {message.content}
+          {message.content.split('\n').map((line, i) => (
+            <span key={i}>
+              {renderText(line)}
+              {i < message.content.split('\n').length - 1 && <br />}
+            </span>
+          ))}
           {message.streaming && <span className={styles.cursor} />}
         </div>
       </div>
@@ -63,15 +103,37 @@ function Message({ message }) {
 }
 
 export default function Ask() {
-  const [messages, setMessages]   = useState([]);
-  const [input, setInput]         = useState('');
-  const [loading, setLoading]     = useState(false);
-  const bottomRef                 = useRef(null);
-  const inputRef                  = useRef(null);
+  const [messages, setMessages]      = useState([]);
+  const [input, setInput]            = useState('');
+  const [loading, setLoading]        = useState(false);
+  const [pageContext, setPageContext] = useState(null);
+  const [isEmbedded, setIsEmbedded]  = useState(false);
+  const bottomRef                    = useRef(null);
+  const inputRef                     = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Detect iframe embedding and listen for page context from parent
+  useEffect(() => {
+    const embedded = window.self !== window.top;
+    setIsEmbedded(embedded);
+
+    function handleMessage(e) {
+      if (e.data?.type === 'gs-page-context') {
+        setPageContext(e.data);
+      }
+    }
+    window.addEventListener('message', handleMessage);
+
+    // Request context from parent immediately
+    if (embedded) {
+      window.parent.postMessage({ type: 'gs-request-context' }, '*');
+    }
+
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   async function sendMessage(text) {
     const query = (text || input).trim();
@@ -100,7 +162,7 @@ export default function Ask() {
       const resp = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: allMessages, query }),
+        body: JSON.stringify({ messages: allMessages, query, pageContext }),
       });
 
       const reader = resp.body.getReader();
@@ -162,9 +224,17 @@ export default function Ask() {
       </Head>
 
       <div className={styles.page}>
-        <SiteHeader currentTool="Ask GS" />
+        {!isEmbedded && <SiteHeader currentTool="Ask GS" />}
 
         <main className={styles.main}>
+          {isEmbedded && pageContext && (
+            <div className={styles.contextBanner}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              Reading: <a href={pageContext.url} target="_blank" rel="noopener noreferrer">{pageContext.title}</a>
+            </div>
+          )}
           {isEmpty ? (
             <div className={styles.empty}>
               <div className={styles.emptyIcon}>
