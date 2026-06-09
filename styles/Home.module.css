@@ -1,0 +1,146 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  border-bottom: 1px solid var(--gray-100);
+  padding: 16px 24px;
+  background: var(--white);
+}
+
+.headerInner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  background: var(--teal-50);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.siteTitle {
+  font-family: 'Lora', serif;
+  font-size: 18px;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+.siteSubtitle {
+  font-size: 12px;
+  color: var(--gray-400);
+}
+
+.main {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+  width: 100%;
+}
+
+.intro {
+  margin-bottom: 40px;
+}
+
+.introTitle {
+  font-family: 'Lora', serif;
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--gray-900);
+  margin-bottom: 12px;
+}
+
+.introText {
+  font-size: 1rem;
+  color: var(--gray-600);
+  max-width: 560px;
+  line-height: 1.7;
+}
+
+.toolGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.toolCard {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+
+.toolCard:hover {
+  border-color: var(--teal-100);
+  box-shadow: 0 4px 16px rgba(28, 114, 147, 0.08);
+}
+
+.toolIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toolText {
+  flex: 1;
+}
+
+.toolTitle {
+  font-family: 'Lora', serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--gray-900);
+  margin-bottom: 2px;
+}
+
+.toolSubtitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.toolDesc {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.toolArrow {
+  flex-shrink: 0;
+}
+
+.footer {
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--gray-400);
+  border-top: 1px solid var(--gray-100);
+}
+
+.footer a:hover {
+  color: var(--teal-600);
+}

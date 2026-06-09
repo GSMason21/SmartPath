@@ -1,0 +1,36 @@
+.card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.row { display: flex; gap: 10px; margin-bottom: 14px; }
+.input {
+  flex: 1; font-family: 'Inter', sans-serif; font-size: 14px;
+  padding: 11px 16px; border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg); background: var(--gray-50);
+  color: var(--gray-900); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input::placeholder { color: var(--gray-400); }
+.input:focus { border-color: var(--teal-400); box-shadow: 0 0 0 3px rgba(28,114,147,0.15); background: var(--white); }
+.btn {
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+  padding: 11px 22px; background: var(--teal-600); color: #fff;
+  border: none; border-radius: var(--radius-lg); cursor: pointer;
+  white-space: nowrap; display: flex; align-items: center; gap: 7px;
+  transition: background 0.15s;
+}
+.btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
+.btn:hover { background: var(--teal-800); }
+.btn:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-size: 12px; font-weight: 500; padding: 5px 12px;
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: 999px; color: var(--gray-600); cursor: pointer;
+  transition: all 0.15s;
+}
+.chip:hover { background: var(--teal-50); border-color: var(--teal-100); color: var(--teal-600); }
+.chip:disabled { opacity: 0.5; cursor: not-allowed; }

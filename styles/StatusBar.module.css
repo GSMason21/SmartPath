@@ -1,0 +1,11 @@
+.bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 16px; background: var(--teal-50);
+  border-radius: var(--radius-lg);
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--teal-400); flex-shrink: 0;
+  animation: pulse 1.4s ease infinite;
+}
+.bar p { font-size: 13px; color: var(--teal-800); }

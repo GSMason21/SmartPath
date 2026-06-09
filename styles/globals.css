@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --teal-50:    #E3EFF4;
+  --teal-100:   #B6E5EC;
+  --teal-400:   #4cbecf;
+  --teal-600:   #1c7293;
+  --teal-800:   #145670;
+  --purple-50:  #EEEDFE;
+  --purple-800: #3C3489;
+  --coral-50:   #F1DDCF;
+  --coral-800:  #7A4A2E;
+  --amber-50:   #F5E6D8;
+  --amber-800:  #6B3D1A;
+  --blue-50:    #E6F1FB;
+  --blue-800:   #0C447C;
+  --gray-50:    #F7F7F5;
+  --gray-100:   #EFEFEC;
+  --gray-200:   #D3D1C7;
+  --gray-400:   #6B6A65;
+  --gray-600:   #3A3935;
+  --gray-900:   #1A1A18;
+  --white:      #FFFFFF;
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  20px;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #FAFAF8;
+  color: var(--gray-900);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
