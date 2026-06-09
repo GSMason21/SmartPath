@@ -14,7 +14,36 @@ const SOURCE_TYPES = {
   article:    { color: '#1a7a4a', bg: '#EEFAF5', label: 'Article' },
 };
 
-// Parse markdown links [title](url) into anchor tags
+// Convert school name to a GettingSmart school profile slug
+function toSchoolSlug(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+// Known school profile names — Claude will try to link these automatically
+// This list is used as a hint; the system prompt also instructs Claude to link schools
+const SCHOOL_PROFILE_BASE = 'https://www.gettingsmart.com/school/';
+
+// Parse a segment of plain text for **bold**, *italic*, and school names
+function parseInlineText(text, keyOffset = 0) {
+  const parts = [];
+  // Match **bold** or *italic*
+  const inlineRegex = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+  let last = 0;
+  let m;
+  while ((m = inlineRegex.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    if (m[1] !== undefined) {
+      parts.push(<strong key={keyOffset + m.index}>{m[1]}</strong>);
+    } else {
+      parts.push(<em key={keyOffset + m.index}>{m[2]}</em>);
+    }
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts.length > 0 ? parts : [text];
+}
+
+// Parse markdown links [title](url), **bold**, *italic* into React elements
 function renderText(text) {
   const parts = [];
   const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
@@ -22,11 +51,9 @@ function renderText(text) {
   let match;
 
   while ((match = linkRegex.exec(text)) !== null) {
-    // Text before the link
     if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
+      parseInlineText(text.slice(lastIndex, match.index), lastIndex).forEach(p => parts.push(p));
     }
-    // The link itself
     parts.push(
       <a
         key={match.index}
@@ -41,12 +68,11 @@ function renderText(text) {
     lastIndex = match.index + match[0].length;
   }
 
-  // Remaining text
   if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
+    parseInlineText(text.slice(lastIndex), lastIndex).forEach(p => parts.push(p));
   }
 
-  return parts.length > 0 ? parts : text;
+  return parts.length > 0 ? parts : [text];
 }
 
 const SUGGESTED = [
