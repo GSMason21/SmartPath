@@ -6,6 +6,13 @@ import SummaryCard from '../components/SummaryCard';
 import ModuleCard from '../components/ModuleCard';
 import SiteHeader from '../components/SiteHeader';
 import styles from '../styles/SmartPath.module.css';
+import {
+  trackSmartPathSearch,
+  trackSmartPathSummaryShown,
+  trackSmartPathFocusSelected,
+  trackSmartPathModuleGenerated,
+  trackSmartPathPDF,
+} from '../lib/analytics';
 
 const CHIPS = [
   'Competency-based learning',
@@ -33,6 +40,7 @@ export default function SmartPath() {
     setSummary(null);
     setModule(null);
     setLoading(true);
+    trackSmartPathSearch(query);
 
     try {
       // Step 1 — Rewrite query
@@ -64,6 +72,7 @@ export default function SmartPath() {
       if (sumRes.ok) {
         const sumData = await sumRes.json();
         setSummary({ ...sumData, query });
+        trackSmartPathSummaryShown(query, matches?.length || 0);
       } else {
         // Fallback: skip summary, go straight to module
         await buildModule(query, context, matches);
@@ -77,6 +86,7 @@ export default function SmartPath() {
   }
 
   async function handleFocusOption(optionTitle, optionDesc) {
+    trackSmartPathFocusSelected(searchStore.current.query, optionTitle);
     const { query: originalQuery, context, matches } = searchStore.current;
     const refinedQuery = `${originalQuery} — focus: ${optionTitle}: ${optionDesc}`;
     setSummary(null);
@@ -125,6 +135,11 @@ export default function SmartPath() {
     }
     const { module } = await genRes.json();
     setModule(module);
+    trackSmartPathModuleGenerated(
+      query,
+      module.estimatedTime,
+      module.frameworkAlignment?.primaryElement
+    );
   }
 
   function reset() {

@@ -2,6 +2,10 @@ import Head from 'next/head';
 import { useState, useRef, useEffect } from 'react';
 import SiteHeader from '../components/SiteHeader';
 import styles from '../styles/Ask.module.css';
+import {
+  trackAskGSMessage,
+  trackAskGSSuggestedQuestion,
+} from '../lib/analytics';
 
 const SOURCE_TYPES = {
   podcast:    { color: '#c45e2a', bg: '#FDF3EE', label: 'Podcast' },
@@ -141,6 +145,7 @@ export default function Ask() {
 
     setInput('');
     setLoading(true);
+    trackAskGSMessage(query, isEmbedded);
 
     // Add user message
     const userMsg = { role: 'user', content: query };
@@ -250,7 +255,7 @@ export default function Ask() {
               </p>
               <div className={styles.suggested}>
                 {SUGGESTED.map(s => (
-                  <button key={s} className={styles.suggestedBtn} onClick={() => sendMessage(s)}>
+                  <button key={s} className={styles.suggestedBtn} onClick={() => { trackAskGSSuggestedQuestion(s); sendMessage(s); }}>
                     {s}
                   </button>
                 ))}

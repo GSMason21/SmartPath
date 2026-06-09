@@ -1,4 +1,5 @@
 import styles from '../styles/ModuleCard.module.css';
+import { trackSmartPathPDF } from '../lib/analytics';
 
 const STEP_COLORS = [
   { bg: '#EEEDFE', text: '#3C3489', border: '#C9C7F5' },
@@ -231,7 +232,7 @@ export default function ModuleCard({ module: m, onReset }) {
       {/* Footer */}
       <div className={styles.footer}>
         <button className={styles.btnSecondary} onClick={onReset}>New module</button>
-        <button className={styles.btnPrimary} onClick={() => window.print()}>Save as PDF</button>
+        <button className={styles.btnPrimary} onClick={() => { trackSmartPathPDF(m.title); window.print(); }}>Save as PDF</button>
       </div>
     </div>
   );
