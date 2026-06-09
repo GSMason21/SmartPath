@@ -4,6 +4,7 @@ import SearchBox from '../components/SearchBox';
 import StatusBar from '../components/StatusBar';
 import SummaryCard from '../components/SummaryCard';
 import ModuleCard from '../components/ModuleCard';
+import SiteHeader from '../components/SiteHeader';
 import styles from '../styles/SmartPath.module.css';
 
 const CHIPS = [
@@ -142,20 +143,14 @@ export default function SmartPath() {
       </Head>
 
       <div className={styles.page}>
-        <header className={styles.header}>
-          <div className={styles.logoMark}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="#1c7293" strokeWidth="1.8" width="22" height="22">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-            </svg>
-          </div>
-          <div>
-            <h1 className={styles.title}>SmartPath</h1>
-            <p className={styles.subtitle}>Learning Module Generator · Getting Smart</p>
-          </div>
-        </header>
+        <SiteHeader currentTool="SmartPath" />
 
         <main className={styles.main}>
+          <div className={styles.pageTitle}>
+            <h1 className={styles.title}>SmartPath</h1>
+            <p className={styles.subtitle}>Generate professional learning modules grounded in the Getting Smart Learning Innovation Framework.</p>
+            <p className={styles.intro}>SmartPath is a professional learning tool powered by Getting Smart&apos;s content library and the Learning Innovation Framework. Describe what you want to learn — a topic, a challenge, or a question — and SmartPath will surface the most relevant Getting Smart articles, podcasts, and whitepapers, then build you a structured learning module complete with a curated reading sequence, key concepts, and actionable outcomes. Whether you&apos;re exploring a new approach to school design or deepening your practice in a specific area, SmartPath turns Getting Smart&apos;s decade of thought leadership into a personalized learning path in seconds.</p>
+          </div>
           <SearchBox
             onSearch={runSearch}
             chips={CHIPS}

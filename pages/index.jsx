@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import SiteHeader from '../components/SiteHeader';
 import styles from '../styles/Home.module.css';
 
 const TOOLS = [
@@ -27,20 +28,7 @@ export default function Home() {
         <meta name="description" content="Interactive tools from Getting Smart for learning innovation." />
       </Head>
       <div className={styles.page}>
-        <header className={styles.header}>
-          <div className={styles.headerInner}>
-            <div className={styles.logo}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="#1c7293" strokeWidth="2" width="24" height="24">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-              </svg>
-            </div>
-            <div>
-              <h1 className={styles.siteTitle}>Getting Smart</h1>
-              <p className={styles.siteSubtitle}>Interactive Tools</p>
-            </div>
-          </div>
-        </header>
+        <SiteHeader />
 
         <main className={styles.main}>
           <div className={styles.intro}>
