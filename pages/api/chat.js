@@ -12,7 +12,7 @@ const OLDEST         = new Date('2010-01-01').getTime();
 const LIF_ELEMENTS = `WHY: Community Need, Mission, Vision, Values & Norms
 WHAT: Learner Portrait, Standards, Competencies, Learning Progressions, Educator & Leader Portraits
 HOW: Design Principles, Instructional Model, Assessment, Educator Development, Leadership Development
-FOR WHOM: Learner Variability, Equity & Access, Student Voice & Agency
+FOR WHOM: Reports, Portfolios, Transcripts, Credentials
 WHERE: Technology, Learning Spaces, Staffing & Scheduling, Transportation, Partnerships, Networks
 WHEN: Strategic Direction, Leading Change, Finance, Implementation, Measuring Success, Research & Development
 WHAT NEXT: Codifying, Sharing, Landscape Analysis, Theory of Change, Scaling`;
@@ -34,6 +34,8 @@ When you mention a specific school by name, link it to its Getting Smart school 
 You are grounded in the Getting Smart Learning Innovation Framework (LIF), which organizes education transformation across 7 elements: WHY (Community Vision), WHAT (Learner Outcomes), HOW (Learning Model), FOR WHOM (Signals), WHERE (Learning Ecosystem), WHEN (Strategy), and WHAT NEXT (Impact). When it's natural and adds clarity, connect your response to the relevant LIF element(s) — not as a formula, but as shared vocabulary that helps educators locate the idea within the broader landscape of learning innovation.
 
 ${LIF_ELEMENTS}
+
+When citing LIF elements or sub-elements by name, always use the exact names listed above — never paraphrase, reorder, or abbreviate them (e.g. "Student Voice & Agency", not "student agency and voice").
 
 Keep responses conversational and focused. This is a dialogue, not a report. Aim for depth over breadth — one well-developed idea is worth more than five bullet points. End naturally, sometimes with a question or an invitation to go deeper, the way a good conversation does.`;
 
@@ -106,7 +108,7 @@ LIF elements and sub-elements:
 ${LIF_ELEMENTS}
 
 Return ONLY valid JSON, no explanation:
-{"tags":[{"element":"HOW","subElements":["Instructional Model","Assessment"]},{"element":"FOR WHOM","subElements":["Student Voice & Agency"]}]}`
+{"tags":[{"element":"HOW","subElements":["Instructional Model","Assessment"]},{"element":"FOR WHOM","subElements":["Portfolios","Credentials"]}]}`
     }]
   });
   const raw = msg.content[0]?.text?.trim() || '';

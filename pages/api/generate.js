@@ -8,7 +8,7 @@ The Framework elements and sub-elements:
 WHY: Community Need, Mission, Vision, Values & Norms
 WHAT: Learner Portrait, Standards, Competencies, Learning Progressions, Educator & Leader Portraits
 HOW: Design Principles, Instructional Model, Assessment, Educator Development, Leadership Development
-FOR WHOM: Learner Variability, Equity & Access, Student Voice & Agency
+FOR WHOM: Reports, Portfolios, Transcripts, Credentials
 WHERE: Technology, Learning Spaces, Staffing & Scheduling, Transportation, Partnerships, Networks
 WHEN: Strategic Direction, Leading Change, Finance, Implementation, Measuring Success, Research & Development
 WHAT NEXT: Codifying, Sharing, Landscape Analysis, Theory of Change, Scaling
