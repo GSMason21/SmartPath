@@ -161,7 +161,7 @@ export default async function handler(req, res) {
     // Stream response and accumulate full text for LIF classification
     let fullText = '';
     const stream = anthropic.messages.stream({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       system: dynamicSystem,
       messages: chatHistory,

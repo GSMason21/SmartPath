@@ -61,7 +61,7 @@ The themes array must use exact LIF element or sub-element names. The competenci
 
   try {
     const msg = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 3200,
       system: SYSTEM,
       messages: [{ role: 'user', content: userPrompt }],
