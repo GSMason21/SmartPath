@@ -23,7 +23,7 @@ The JSON must include:
 - estimatedTime: string (e.g. "45-60 min")
 - frameworkAlignment: object with "primaryElement" (most relevant LIF element), "horizon" ("Traditional", "Transitional", or "Transformational"), and "subElements" (array of 2-3 relevant sub-element names)
 - sources: array of 5-7 {title:string, url:string, type:string} where type is "article", "podcast", "whitepaper", or "page". MUST include at least 1 podcast. Use ONLY real URLs from retrieved content. Do not invent URLs.
-- sequence: array of 4-5 step objects each with: title (active verb phrase), description (connected to LIF principles), duration, tasks (2-3 concrete learner actions), resources (0-2 objects with title/url/type, real URLs only), videoUrl (optional — only if a [Video:] URL was provided for a source in this step).
+- sequence: array of 4-5 step objects each with: title (active verb phrase), description (connected to LIF principles), duration, tasks (2-3 concrete learner actions), resources (MAXIMUM 2 objects with title/url/type, real URLs only — never include more than 2 resources per step), reflectionPrompt (one sentence posing a direct self-reflection question connecting the step content to the learner's own practice, e.g. "How does this shift from compliance to agency show up in your current classroom environment?"), videoUrl (optional — only if a [Video:] URL was provided for a source in this step), masteryOptions (ONLY on the FINAL step — array of exactly 3 objects each with label (string) and description (string), offering learners three distinct ways to demonstrate mastery: one video-based option, one visual or creative option, and one written or planning option).
 - additionalResources: array of 3-5 objects with {title, url, type, description}. Types ONLY: "podcast", "whitepaper", "page". Real URLs only.
 - competencies: string[] (4-5 outcome statements starting with action verbs)
 
@@ -39,9 +39,9 @@ LIF COMPETENCY LANGUAGE BANK:
 "Forge strong community partnerships to enhance learning opportunities and resources"
 "Develop a strategy that supports the attainment of the vision"
 "Foster a culture of continuous improvement and innovation with clear processes for piloting evidence-based approaches"
-"Articulate an actionable, vision-aligned theory of change that integrates challenges, opportunities, initiatives, and outcomes"
+"Articulate an actionable, vision-aligned theory of change that integrates challenges, opportunities, initiatives, and outputs"
 
-IMPORTANT: (1) sources array MUST contain 5-7 items including at least 1 podcast. (2) themes must ONLY use LIF element/sub-element names — never horizon labels. (3) Never invent URLs.`;
+IMPORTANT: (1) sources array MUST contain 5-7 items including at least 1 podcast. (2) themes must ONLY use LIF element/sub-element names — never horizon labels. (3) Never invent URLs. (4) Every sequence step MUST include a reflectionPrompt. (5) masteryOptions MUST appear on the final step only, with exactly 3 options.`;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -57,7 +57,7 @@ ${context
   ? `REAL CONTENT RETRIEVED FROM GETTING SMART DATABASE (${matches?.length || 0} articles found):\n\n${context}\n\nUse the titles and URLs from [Source:] and [URL:] fields above. Only include sources/resources where a real URL exists — do not invent URLs.`
   : `No database results found. Draw on Getting Smart's expertise in the Learning Innovation Framework and education transformation. Omit any sources where you cannot confirm the URL exists.`}
 
-The themes array must use exact LIF element or sub-element names. The competencies must draw from the LIF competency language. The sequence should feel like a coherent learning journey through the Framework lens.`;
+The themes array must use exact LIF element or sub-element names. The competencies must draw from the LIF competency language. The sequence should feel like a coherent learning journey through the Framework lens. Every step must end with a reflectionPrompt that anchors the content in the learner's own practice.`;
 
   try {
     const msg = await client.messages.create({
