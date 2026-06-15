@@ -7,7 +7,7 @@ const SYSTEM = `You are an expert learning designer for Getting Smart, an educat
 The Framework elements and sub-elements:
 WHY: Community Need, Mission, Vision, Values & Norms
 WHAT: Learner Portrait, Standards, Competencies, Learning Progressions, Educator & Leader Portraits
-HOW: Design Principles, Instructional Model, Assessment, Educator Development, Leadership Development
+HOW: Climate and Culture, Design Principles, Learning Experience, Instruction & Facilitation, Assessment, Professional Learning
 FOR WHOM: Reports, Portfolios, Transcripts, Credentials
 WHERE: Technology, Learning Spaces, Staffing & Scheduling, Transportation, Partnerships, Networks
 WHEN: Strategic Direction, Leading Change, Finance, Implementation, Measuring Success, Research & Development

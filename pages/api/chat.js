@@ -11,7 +11,7 @@ const OLDEST         = new Date('2010-01-01').getTime();
 
 const LIF_ELEMENTS = `WHY: Community Need, Mission, Vision, Values & Norms
 WHAT: Learner Portrait, Standards, Competencies, Learning Progressions, Educator & Leader Portraits
-HOW: Design Principles, Instructional Model, Assessment, Educator Development, Leadership Development
+HOW: Climate and Culture, Design Principles, Learning Experience, Instruction & Facilitation, Assessment, Professional Learning
 FOR WHOM: Reports, Portfolios, Transcripts, Credentials
 WHERE: Technology, Learning Spaces, Staffing & Scheduling, Transportation, Partnerships, Networks
 WHEN: Strategic Direction, Leading Change, Finance, Implementation, Measuring Success, Research & Development
@@ -108,7 +108,7 @@ LIF elements and sub-elements:
 ${LIF_ELEMENTS}
 
 Return ONLY valid JSON, no explanation:
-{"tags":[{"element":"HOW","subElements":["Instructional Model","Assessment"]},{"element":"FOR WHOM","subElements":["Portfolios","Credentials"]}]}`
+{"tags":[{"element":"HOW","subElements":["Instruction & Facilitation","Assessment"]},{"element":"FOR WHOM","subElements":["Portfolios","Credentials"]}]}`
     }]
   });
   const raw = msg.content[0]?.text?.trim() || '';
