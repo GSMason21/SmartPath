@@ -80,7 +80,7 @@ export default function Discover() {
         <main className={styles.main}>
           <div className={styles.intro}>
             <h1 className={styles.title}>Discover</h1>
-            <p className={styles.subtitle}>Explore Getting Smart&apos;s library, one resource at a time.</p>
+            <p className={styles.subtitle}>Push your thinking by discovering resources from Getting Smart&apos;s rich content library.</p>
           </div>
 
           <div className={`${styles.cardWrap} ${fading ? styles.out : ''} ${isVisible ? styles.in : ''}`}>
