@@ -9,6 +9,14 @@ const pinecone  = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const RECENCY_CUTOFF = new Date('2021-01-01').getTime();
 const OLDEST         = new Date('2010-01-01').getTime();
 
+const LIF_ELEMENTS = `WHY: Community Need, Mission, Vision, Values & Norms
+WHAT: Learner Portrait, Standards, Competencies, Learning Progressions, Educator & Leader Portraits
+HOW: Design Principles, Instructional Model, Assessment, Educator Development, Leadership Development
+FOR WHOM: Learner Variability, Equity & Access, Student Voice & Agency
+WHERE: Technology, Learning Spaces, Staffing & Scheduling, Transportation, Partnerships, Networks
+WHEN: Strategic Direction, Leading Change, Finance, Implementation, Measuring Success, Research & Development
+WHAT NEXT: Codifying, Sharing, Landscape Analysis, Theory of Change, Scaling`;
+
 const SYSTEM = `You are Ask GS, a research assistant for GettingSmart.com — a leading K-12 education thought leadership platform. You embody the voice and sensibility of Getting Smart's editorial work: intellectually curious, grounded in evidence, and genuinely optimistic about what schools can become without being naive about how hard change is.
 
 Your tone is collegial and direct — like a well-read colleague who has thought carefully about these ideas and isn't afraid to have a point of view. You don't just summarize research; you wrestle with it. You'll introduce a finding and immediately interrogate it: what does it actually mean? What does it leave out? Where does conventional wisdom get it wrong?
@@ -23,11 +31,14 @@ When you reference a specific article, podcast, or whitepaper from the retrieved
 
 When you mention a specific school by name, link it to its Getting Smart school profile using the format: [School Name](https://www.gettingsmart.com/school/school-name-slug). Convert the school name to a URL slug by lowercasing and replacing spaces and special characters with hyphens (e.g. "High Tech High" → https://www.gettingsmart.com/school/high-tech-high). Only do this for schools you are confident have a Getting Smart profile — schools that appear in the retrieved content are likely to have one.
 
+You are grounded in the Getting Smart Learning Innovation Framework (LIF), which organizes education transformation across 7 elements: WHY (Community Vision), WHAT (Learner Outcomes), HOW (Learning Model), FOR WHOM (Signals), WHERE (Learning Ecosystem), WHEN (Strategy), and WHAT NEXT (Impact). When it's natural and adds clarity, connect your response to the relevant LIF element(s) — not as a formula, but as shared vocabulary that helps educators locate the idea within the broader landscape of learning innovation.
+
+${LIF_ELEMENTS}
+
 Keep responses conversational and focused. This is a dialogue, not a report. Aim for depth over breadth — one well-developed idea is worth more than five bullet points. End naturally, sometimes with a question or an invitation to go deeper, the way a good conversation does.`;
 
 
 async function retrieveContext(query, podcastIntent) {
-  // Rewrite query for better retrieval
   const rewriteMsg = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 60,
@@ -38,14 +49,12 @@ async function retrieveContext(query, podcastIntent) {
   });
   const semanticQuery = rewriteMsg.content[0]?.text?.trim() || query;
 
-  // Embed
   const embedResp = await openai.embeddings.create({
     model: 'text-embedding-3-small',
     input: semanticQuery,
   });
   const vector = embedResp.data[0].embedding;
 
-  // Query Pinecone
   const index = pinecone.index(process.env.PINECONE_INDEX, process.env.PINECONE_HOST);
   const queryResp = await index.query({
     vector,
@@ -53,7 +62,6 @@ async function retrieveContext(query, podcastIntent) {
     includeMetadata: true,
   });
 
-  // Score and rank
   const NOW = Date.now();
   const matches = (queryResp.matches || [])
     .filter(m => m.score > 0.3)
@@ -67,7 +75,7 @@ async function retrieveContext(query, podcastIntent) {
       return { ...m, combinedScore };
     })
     .sort((a, b) => b.combinedScore - a.combinedScore)
-    .slice(0, 8); // top 8 for chat context
+    .slice(0, 8);
 
   const context = matches.map(m => {
     const meta  = m.metadata || {};
@@ -82,28 +90,50 @@ async function retrieveContext(query, podcastIntent) {
   return { context, matches, semanticQuery };
 }
 
+async function classifyLIF(query, responseText) {
+  const msg = await anthropic.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 200,
+    messages: [{
+      role: 'user',
+      content: `Classify this education Q&A against the Getting Smart Learning Innovation Framework. Return 1-3 most relevant elements and their applicable sub-elements.
+
+Question: ${query}
+
+Response summary (first 300 chars): ${responseText.slice(0, 300)}
+
+LIF elements and sub-elements:
+${LIF_ELEMENTS}
+
+Return ONLY valid JSON, no explanation:
+{"tags":[{"element":"HOW","subElements":["Instructional Model","Assessment"]},{"element":"FOR WHOM","subElements":["Student Voice & Agency"]}]}`
+    }]
+  });
+  const raw = msg.content[0]?.text?.trim() || '';
+  const start = raw.indexOf('{');
+  const end   = raw.lastIndexOf('}');
+  if (start === -1 || end === -1) return null;
+  return JSON.parse(raw.slice(start, end + 1));
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const { messages, query, pageContext } = req.body;
   if (!messages || !query) return res.status(400).json({ error: 'messages and query required' });
 
-  // Set up streaming headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
   try {
-    // Detect podcast intent
     const lower = query.toLowerCase();
     const podcastSignals = ['hear from','listen','podcast','episode','interview','talk with','conversation with','founder','founders','voices','audio'];
     const podcastIntent = podcastSignals.some(s => lower.includes(s));
 
-    // Retrieve context
     const { context, matches, semanticQuery } = await retrieveContext(query, podcastIntent);
     console.log(`[/api/chat] query="${query}" semantic="${semanticQuery}" matches=${matches.length}`);
 
-    // Send sources to client before streaming starts
     const sources = matches.slice(0, 5).map(m => ({
       title: m.metadata?.title || '',
       url:   m.metadata?.url   || '',
@@ -112,26 +142,24 @@ export default async function handler(req, res) {
     }));
     res.write(`data: ${JSON.stringify({ type: 'sources', sources })}\n\n`);
 
-    // Build dynamic system prompt — inject page context if available
     const contextNote = pageContext?.url
       ? `\n\nCurrent page context: The user is reading "${pageContext.title}" at ${pageContext.url}. If their question relates to this content, acknowledge it naturally and use it to inform your response.`
       : '';
     const dynamicSystem = SYSTEM + contextNote;
 
-    // Build conversation history for Claude
     const chatHistory = messages.slice(-10).map(m => ({
       role: m.role,
       content: m.content,
     }));
 
-    // Add context to the latest user message
     const lastUserIdx = chatHistory.length - 1;
     chatHistory[lastUserIdx] = {
       role: 'user',
       content: `${query}\n\n---\nRelevant Getting Smart content:\n${context || 'No specific content retrieved — answer from general knowledge about education innovation.'}`
     };
 
-    // Stream Claude response
+    // Stream response and accumulate full text for LIF classification
+    let fullText = '';
     const stream = anthropic.messages.stream({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1024,
@@ -141,11 +169,23 @@ export default async function handler(req, res) {
 
     for await (const chunk of stream) {
       if (chunk.type === 'content_block_delta' && chunk.delta?.type === 'text_delta') {
+        fullText += chunk.delta.text;
         res.write(`data: ${JSON.stringify({ type: 'text', text: chunk.delta.text })}\n\n`);
       }
     }
 
     res.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
+
+    // Classify LIF alignment after stream completes (non-blocking for client)
+    try {
+      const lifData = await classifyLIF(query, fullText);
+      if (lifData?.tags?.length) {
+        res.write(`data: ${JSON.stringify({ type: 'lifTags', tags: lifData.tags })}\n\n`);
+      }
+    } catch (lifErr) {
+      console.error('[/api/chat] LIF classification error:', lifErr);
+    }
+
     res.end();
 
   } catch (err) {
