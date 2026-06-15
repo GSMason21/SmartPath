@@ -26,6 +26,8 @@ const SOURCE_TYPES = {
   article:    { bg: '#EEFAF5', color: '#1a7a4a', label: 'Article',    icon: 'book-open' },
 };
 
+const MASTERY_ICONS = ['video', 'image', 'edit-3'];
+
 function Icon({ name, size = 16, color }) {
   const s = { width: size, height: size, stroke: color || 'currentColor', fill: 'none', strokeWidth: 1.8, flexShrink: 0 };
   switch(name) {
@@ -36,6 +38,10 @@ function Icon({ name, size = 16, color }) {
     case 'check':      return <svg viewBox="0 0 24 24" style={s}><polyline points="20 6 9 17 4 12"/></svg>;
     case 'arrow':      return <svg viewBox="0 0 24 24" style={s}><path d="M5 12h14M12 5l7 7-7 7"/></svg>;
     case 'clock':      return <svg viewBox="0 0 24 24" style={s}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
+    case 'reflect':    return <svg viewBox="0 0 24 24" style={s}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+    case 'video':      return <svg viewBox="0 0 24 24" style={s}><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>;
+    case 'image':      return <svg viewBox="0 0 24 24" style={s}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>;
+    case 'edit-3':     return <svg viewBox="0 0 24 24" style={s}><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
     default: return null;
   }
 }
@@ -53,6 +59,7 @@ function getThemeColor(theme, index) {
 
 export default function ModuleCard({ module: m, onReset }) {
   const lifColor = getLIFColor(m.frameworkAlignment?.primaryElement);
+  const lastStepIndex = (m.sequence || []).length - 1;
 
   return (
     <div className={styles.card}>
@@ -134,6 +141,7 @@ export default function ModuleCard({ module: m, onReset }) {
             <div className={styles.steps}>
               {m.sequence.map((step, i) => {
                 const col = STEP_COLORS[i % STEP_COLORS.length];
+                const isFinalStep = i === lastStepIndex;
                 return (
                   <div key={i} className={styles.step} style={{ borderLeft: `3px solid ${col.border}` }}>
                     <div className={styles.stepHeader}>
@@ -158,7 +166,7 @@ export default function ModuleCard({ module: m, onReset }) {
                       </div>
                     )}
 
-                    {(step.resources || []).filter(r => r.url).map((r, ri) => {
+                    {(step.resources || []).filter(r => r.url).slice(0, 2).map((r, ri) => {
                       const rt = SOURCE_TYPES[r.type] || SOURCE_TYPES.article;
                       return (
                         <a key={ri} href={r.url} target="_blank" rel="noopener noreferrer" className={styles.stepResource}>
@@ -178,6 +186,30 @@ export default function ModuleCard({ module: m, onReset }) {
                           allowFullScreen
                           className={styles.videoFrame}
                         />
+                      </div>
+                    )}
+
+                    {step.reflectionPrompt && (
+                      <div className={styles.reflection} style={{ borderColor: col.border }}>
+                        <Icon name="reflect" size={13} color={col.text} />
+                        <p className={styles.reflectionText} style={{ color: col.text }}>{step.reflectionPrompt}</p>
+                      </div>
+                    )}
+
+                    {isFinalStep && (step.masteryOptions || []).length > 0 && (
+                      <div className={styles.masteryBlock}>
+                        <p className={styles.masteryLabel}>Choose how you&apos;ll demonstrate mastery</p>
+                        <div className={styles.masteryOptions}>
+                          {step.masteryOptions.map((opt, oi) => (
+                            <div key={oi} className={styles.masteryOption}>
+                              <span className={styles.masteryIcon} style={{ background: col.bg }}>
+                                <Icon name={MASTERY_ICONS[oi % MASTERY_ICONS.length]} size={15} color={col.text} />
+                              </span>
+                              <strong className={styles.masteryOptionLabel}>{opt.label}</strong>
+                              <span className={styles.masteryOptionDesc}>{opt.description}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
