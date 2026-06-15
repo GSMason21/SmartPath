@@ -180,6 +180,51 @@
   50% { opacity: 0; }
 }
 
+/* LIF framework alignment */
+.lifAlignment {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.lifAlignmentLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-400);
+  white-space: nowrap;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
+.lifTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lifTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.lifTagElement {
+  font-weight: 700;
+}
+
+.lifTagSubs {
+  opacity: 0.75;
+}
+
 /* Input area */
 .inputArea {
   position: fixed;
