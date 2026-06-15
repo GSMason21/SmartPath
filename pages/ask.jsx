@@ -14,19 +14,18 @@ const SOURCE_TYPES = {
   article:    { color: '#1a7a4a', bg: '#EEFAF5', label: 'Article' },
 };
 
-// Convert school name to a GettingSmart school profile slug
-function toSchoolSlug(name) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-}
+const LIF_COLORS = {
+  'WHY':       { bg: '#EEEDFE', text: '#3C3489' },
+  'WHAT':      { bg: '#F1DDCF', text: '#7A4A2E' },
+  'HOW':       { bg: '#E3EFF4', text: '#1c7293' },
+  'FOR WHOM':  { bg: '#F5E6D8', text: '#6B3D1A' },
+  'WHERE':     { bg: '#E6F1FB', text: '#0C447C' },
+  'WHEN':      { bg: '#EEF9F0', text: '#1A5C2E' },
+  'WHAT NEXT': { bg: '#FEF0F0', text: '#7A1A1A' },
+};
 
-// Known school profile names — Claude will try to link these automatically
-// This list is used as a hint; the system prompt also instructs Claude to link schools
-const SCHOOL_PROFILE_BASE = 'https://www.gettingsmart.com/school/';
-
-// Parse a segment of plain text for **bold**, *italic*, and school names
 function parseInlineText(text, keyOffset = 0) {
   const parts = [];
-  // Match **bold** or *italic*
   const inlineRegex = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
   let last = 0;
   let m;
@@ -43,7 +42,6 @@ function parseInlineText(text, keyOffset = 0) {
   return parts.length > 0 ? parts : [text];
 }
 
-// Parse markdown links [title](url), **bold**, *italic* into React elements
 function renderText(text) {
   const parts = [];
   const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
@@ -95,6 +93,28 @@ function SourcePill({ source }) {
   );
 }
 
+function LIFAlignment({ tags }) {
+  if (!tags || tags.length === 0) return null;
+  return (
+    <div className={styles.lifAlignment}>
+      <span className={styles.lifAlignmentLabel}>Framework</span>
+      <div className={styles.lifTags}>
+        {tags.map((tag, i) => {
+          const color = LIF_COLORS[tag.element] || { bg: '#E3EFF4', text: '#1c7293' };
+          return (
+            <div key={i} className={styles.lifTag} style={{ background: color.bg, color: color.text }}>
+              <span className={styles.lifTagElement}>{tag.element}</span>
+              {tag.subElements && tag.subElements.length > 0 && (
+                <span className={styles.lifTagSubs}>{tag.subElements.join(' · ')}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function Message({ message }) {
   if (message.role === 'user') {
     return (
@@ -127,6 +147,7 @@ function Message({ message }) {
           ))}
           {message.streaming && <span className={styles.cursor} />}
         </div>
+        {!message.streaming && <LIFAlignment tags={message.lifTags} />}
       </div>
     </div>
   );
@@ -145,7 +166,6 @@ export default function Ask() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Detect iframe embedding and listen for page context from parent
   useEffect(() => {
     const embedded = window.self !== window.top;
     setIsEmbedded(embedded);
@@ -157,7 +177,6 @@ export default function Ask() {
     }
     window.addEventListener('message', handleMessage);
 
-    // Request context from parent immediately
     if (embedded) {
       window.parent.postMessage({ type: 'gs-request-context' }, '*');
     }
@@ -173,17 +192,16 @@ export default function Ask() {
     setLoading(true);
     trackAskGSMessage(query, isEmbedded);
 
-    // Add user message
     const userMsg = { role: 'user', content: query };
     setMessages(prev => [...prev, userMsg]);
 
-    // Add placeholder assistant message
     const assistantId = Date.now();
     setMessages(prev => [...prev, {
       id: assistantId,
       role: 'assistant',
       content: '',
       sources: [],
+      lifTags: [],
       streaming: true,
     }]);
 
@@ -220,6 +238,10 @@ export default function Ask() {
           } else if (data.type === 'done') {
             setMessages(prev => prev.map(m =>
               m.id === assistantId ? { ...m, streaming: false } : m
+            ));
+          } else if (data.type === 'lifTags') {
+            setMessages(prev => prev.map(m =>
+              m.id === assistantId ? { ...m, lifTags: data.tags } : m
             ));
           } else if (data.type === 'error') {
             setMessages(prev => prev.map(m =>
