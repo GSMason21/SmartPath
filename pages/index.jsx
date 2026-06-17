@@ -5,6 +5,21 @@ import styles from '../styles/Home.module.css';
 
 const TOOLS = [
   {
+    href: '/moves',
+    title: 'School Design Moves',
+    subtitle: 'Learning Innovation Framework',
+    description: 'Explore actionable school design moves organized by the 7 elements of the Learning Innovation Framework, with curated Getting Smart resources for each.',
+    color: '#1A5C2E',
+    bg: '#EEF9F0',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="28" height="28">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+    ),
+  },
+  {
     href: '/smartpath',
     title: 'SmartPath',
     subtitle: 'Learning Module Generator',

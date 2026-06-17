@@ -1,0 +1,385 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 56px 24px 80px;
+  width: 100%;
+}
+
+/* ── Intro ── */
+
+.intro {
+  margin-bottom: 48px;
+  max-width: 600px;
+}
+
+.title {
+  font-family: 'Lora', serif;
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--gray-900);
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+}
+
+.subtitle strong {
+  color: var(--gray-900);
+  font-weight: 600;
+}
+
+/* ── Sections ── */
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.sectionTag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.sectionDot {
+  color: var(--gray-200);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.sectionSubtitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Card Grid ── */
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+/* ── Move Card ── */
+
+.moveCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.moveCard:hover {
+  border-color: var(--gray-200);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.moveCard.active {
+  transform: translateY(-2px);
+}
+
+/* ── Move Card Content ── */
+
+.lifTag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+
+.moveName {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--gray-900);
+  line-height: 1.4;
+}
+
+.moveDesc {
+  font-size: 0.84rem;
+  color: var(--gray-400);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Backdrop ── */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.22);
+  z-index: 199;
+  animation: backdropIn 0.2s ease both;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Detail Panel ── */
+
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100vh;
+  background: var(--white);
+  border-left: 1px solid var(--gray-100);
+  box-shadow: -4px 0 32px rgba(0,0,0,0.1);
+  z-index: 200;
+  overflow-y: auto;
+  padding: 60px 32px 40px;
+  transform: translateX(100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.panelOpen {
+  transform: translateX(0);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--gray-400);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.closeBtn:hover {
+  border-color: var(--gray-600);
+  color: var(--gray-900);
+}
+
+.panelLif {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+
+.panelTitle {
+  font-family: 'Lora', serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+  color: var(--gray-900);
+  line-height: 1.35;
+  margin-bottom: 12px;
+}
+
+.panelDesc {
+  font-size: 0.95rem;
+  color: var(--gray-600);
+  line-height: 1.75;
+}
+
+.divider {
+  height: 1px;
+  background: var(--gray-100);
+  margin: 28px 0;
+}
+
+.resourcesLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-400);
+  margin-bottom: 14px;
+}
+
+/* ── Resource Cards ── */
+
+.resourceList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resourceCard {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px 15px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+  cursor: pointer;
+}
+
+.resourceCard:hover {
+  border-color: var(--teal-100);
+  background: var(--teal-50);
+}
+
+.typeBadge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.resourceTitle {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-900);
+  line-height: 1.45;
+}
+
+.arrowIcon {
+  color: var(--gray-400);
+  flex-shrink: 0;
+  transition: transform 0.15s, color 0.15s;
+}
+
+.resourceCard:hover .arrowIcon {
+  color: var(--teal-600);
+  transform: translateX(2px);
+}
+
+/* ── Skeleton ── */
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skItem {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px 15px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+}
+
+.skBlock {
+  background: var(--gray-200);
+  border-radius: 4px;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+.skBadge {
+  width: 62px;
+  height: 18px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.skTitle {
+  flex: 1;
+  height: 14px;
+}
+
+/* ── State messages ── */
+
+.stateMsg {
+  font-size: 0.9rem;
+  color: var(--gray-400);
+  text-align: center;
+  padding: 24px 0;
+  line-height: 1.6;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+  .cardGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding: 40px 16px 60px;
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    width: 100%;
+    height: auto;
+    max-height: 85vh;
+    top: auto;
+    bottom: 0;
+    border-left: none;
+    border-top: 1px solid var(--gray-100);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 32px rgba(0,0,0,0.1);
+    transform: translateY(100%);
+    padding: 32px 24px 40px;
+  }
+
+  .panelOpen {
+    transform: translateY(0);
+  }
+
+  .closeBtn {
+    top: 16px;
+    right: 16px;
+  }
+}
