@@ -20,34 +20,48 @@ const TYPE_STYLES = {
 };
 
 const MOVES = [
-  // WHEN · Strategy
-  { id: 'north-star',       lif: 'WHEN',      name: 'North Star Design Session',     desc: 'Facilitate a team workshop to articulate a bold, inspiring vision that guides all future design decisions.' },
-  { id: 'theory-of-change', lif: 'WHEN',      name: 'Theory of Change Mapping',      desc: 'Map the causal chain from current conditions to desired outcomes, identifying key leverage points for transformation.' },
-  { id: 'strategy-sprint',  lif: 'WHEN',      name: 'Strategy Sprint',               desc: 'Run a focused 3–5 day intensive to prototype and pressure-test strategic priorities before committing resources.' },
   // WHY · Community Vision
-  { id: 'listening-tour',   lif: 'WHY',       name: 'Community Listening Tour',      desc: 'Conduct structured conversations with students, families, and neighbors to surface authentic needs and aspirations.' },
-  { id: 'value-canvas',     lif: 'WHY',       name: 'Value Proposition Canvas',      desc: 'Define the unique value your school creates for learners and families by mapping student jobs, pains, and gains.' },
-  { id: 'asset-mapping',    lif: 'WHY',       name: 'Community Asset Mapping',       desc: 'Identify and catalog the strengths, resources, and local opportunities that can power your school design.' },
+  { id: 'community-need',          lif: 'WHY',       name: 'Community Need Assessment',         desc: 'Surface and document community challenges and assets to shape school vision and learner outcomes.' },
+  { id: 'mission',                 lif: 'WHY',       name: 'Mission Definition',                desc: 'Define the school\'s mission to guide how the community vision will be achieved.' },
+  { id: 'vision',                  lif: 'WHY',       name: 'Long-Term Vision Articulation',     desc: 'Co-create an inspiring long-term vision that guides all school and system decisions.' },
+  { id: 'values-norms',            lif: 'WHY',       name: 'Values & Norms Design',             desc: 'Establish shared values and behavioral norms that shape a positive school culture.' },
   // WHAT · Outcomes
-  { id: 'grad-profile',     lif: 'WHAT',      name: 'Graduate Profile Design',       desc: 'Collaboratively define the knowledge, skills, and dispositions every graduate will carry into the world.' },
-  { id: 'competency-map',   lif: 'WHAT',      name: 'Competency Framework Mapping',  desc: 'Develop a clear, measurable set of competencies aligned to your graduate profile and future-ready demands.' },
-  { id: 'outcomes-audit',   lif: 'WHAT',      name: 'Learning Outcomes Audit',       desc: 'Assess current results against your desired graduate profile to identify gaps and opportunities for redesign.' },
+  { id: 'learner-portrait',        lif: 'WHAT',      name: 'Learner Portrait Design',           desc: 'Collaboratively define the knowledge, skills, and dispositions every graduate will embody.' },
+  { id: 'standards',               lif: 'WHAT',      name: 'Standards Alignment',               desc: 'Align rubrics and proficiency scales with discipline standards to clarify learning expectations.' },
+  { id: 'competencies',            lif: 'WHAT',      name: 'Competency Framework Design',       desc: 'Define a future-ready competency framework equipping all students for complex real-world challenges.' },
+  { id: 'learning-progressions',   lif: 'WHAT',      name: 'Learning Progressions Mapping',     desc: 'Build flexible learning pathways so students advance by demonstrating mastery, not seat time.' },
+  { id: 'educator-leader-portraits', lif: 'WHAT',    name: 'Educator & Leader Portraits',       desc: 'Define the competencies educators and leaders need to enable a learner-centered model.' },
   // HOW · Learning Model
-  { id: 'pbl-design',       lif: 'HOW',       name: 'Project-Based Learning Design', desc: 'Design rigorous, authentic projects that integrate academic content with real-world application and student agency.' },
-  { id: 'mastery-map',      lif: 'HOW',       name: 'Mastery Progression Mapping',   desc: 'Create clear progressions so learners advance based on demonstrated mastery rather than seat time.' },
-  { id: 'advisory-design',  lif: 'HOW',       name: 'Advisory System Design',        desc: 'Build a structured advisory program so every student has a trusted advocate supporting their growth and belonging.' },
+  { id: 'climate-culture',         lif: 'HOW',       name: 'Climate & Culture Design',          desc: 'Cultivate a belonging-centered, growth-oriented culture where every learner feels safe and included.' },
+  { id: 'design-principles',       lif: 'HOW',       name: 'Design Principles Development',     desc: 'Define guiding design principles that ensure coherent and innovative learning experiences.' },
+  { id: 'learning-experience',     lif: 'HOW',       name: 'Learning Experience Design',        desc: 'Design purposeful, real-world learning experiences that inspire curiosity and develop critical skills.' },
+  { id: 'instruction-facilitation', lif: 'HOW',      name: 'Instruction & Facilitation Shift',  desc: 'Shift to facilitative, learner-centered instructional strategies that build student independence and agency.' },
+  { id: 'assessment',              lif: 'HOW',       name: 'Equitable Assessment Design',       desc: 'Design authentic, equity-centered assessments that reveal the full range of student strengths.' },
+  { id: 'professional-learning',   lif: 'HOW',       name: 'Professional Learning Ecosystem',   desc: 'Build a personalized professional learning ecosystem that continuously grows educator capacity and impact.' },
   // FOR WHOM · Signals
-  { id: 'learner-personas', lif: 'FOR WHOM',  name: 'Learner Persona Development',   desc: 'Create rich, research-based portraits of the diverse students your school serves to ground all design decisions.' },
-  { id: 'equity-audit',     lif: 'FOR WHOM',  name: 'Equity Audit',                  desc: 'Systematically examine policies, practices, and outcomes to identify and address disparities across student groups.' },
-  { id: 'student-voice',    lif: 'FOR WHOM',  name: 'Student Voice Design Sprint',   desc: 'Center student perspectives using structured protocols that give young people genuine decision-making power.' },
+  { id: 'reports',                 lif: 'FOR WHOM',  name: 'Holistic Progress Reports',         desc: 'Create holistic progress reports capturing student growth across academic and competency-based metrics.' },
+  { id: 'portfolios',              lif: 'FOR WHOM',  name: 'Portfolio Implementation',          desc: 'Launch portfolio systems empowering learners to document, reflect on, and share their growth.' },
+  { id: 'transcripts',             lif: 'FOR WHOM',  name: 'Whole-Learner Transcript Design',   desc: 'Redesign transcripts to showcase the full breadth of student competencies and experiences.' },
+  { id: 'credentials',             lif: 'FOR WHOM',  name: 'Credentialing System Design',       desc: 'Build micro-credentialing systems that validate and signal specific student skills and expertise.' },
   // WHERE · Learning Ecosystem
-  { id: 'space-walk',       lif: 'WHERE',     name: 'Space Reimagination Walk',      desc: 'Conduct an observation and ideation exercise to redesign physical environments to better support your learning model.' },
-  { id: 'partner-map',      lif: 'WHERE',     name: 'Partnership Ecosystem Mapping', desc: 'Identify and cultivate community partnerships that expand learning opportunities beyond the classroom walls.' },
-  { id: 'hybrid-design',    lif: 'WHERE',     name: 'Hybrid Learning Design',        desc: 'Thoughtfully blend in-person and digital learning to maximize flexibility, access, and depth for all learners.' },
+  { id: 'technology',              lif: 'WHERE',     name: 'Future-Ready Technology Integration', desc: 'Leverage cutting-edge technology to personalize learning and prepare students for a digital world.' },
+  { id: 'facilities',              lif: 'WHERE',     name: 'Adaptable Facilities Design',       desc: 'Transform facilities into flexible, inspiring spaces that support diverse and innovative pedagogies.' },
+  { id: 'staffing-scheduling',     lif: 'WHERE',     name: 'Staffing & Scheduling Innovation',  desc: 'Design flexible staffing and schedules that enable personalized learning and sustain educator well-being.' },
+  { id: 'transportation',          lif: 'WHERE',     name: 'Equitable Transportation Planning', desc: 'Build equitable transportation systems enabling all learners to access diverse learning opportunities.' },
+  { id: 'partnerships',            lif: 'WHERE',     name: 'Community Partnership Development', desc: 'Cultivate reciprocal community partnerships that expand authentic learning opportunities beyond school walls.' },
+  { id: 'networks',                lif: 'WHERE',     name: 'Learning Network Building',         desc: 'Connect to diverse learning networks to source and accelerate high-impact educational innovations.' },
+  // WHEN · Strategy
+  { id: 'strategic-direction',     lif: 'WHEN',      name: 'Strategic Direction Setting',       desc: 'Develop a vision-aligned multi-year strategy guiding all school decisions and resource allocation.' },
+  { id: 'leading-change',          lif: 'WHEN',      name: 'Leading Change Initiative',         desc: 'Lead systemic change initiatives that empower every stakeholder to drive learning model innovation.' },
+  { id: 'implementation',          lif: 'WHEN',      name: 'Implementation Science Application', desc: 'Apply implementation science and project management to maximize outcomes for strategic initiatives.' },
+  { id: 'measuring-success',       lif: 'WHEN',      name: 'Measuring Success Framework',       desc: 'Build transparent accountability systems using clear metrics to drive continuous improvement.' },
+  { id: 'research-development',    lif: 'WHEN',      name: 'Research & Development Culture',    desc: 'Foster a culture of iterative piloting and evidence-based innovation to improve learning continuously.' },
   // WHAT NEXT · Sharing and Scaling
-  { id: 'scale-readiness',  lif: 'WHAT NEXT', name: 'Scale Readiness Assessment',    desc: 'Evaluate your school readiness to grow or replicate by examining core conditions for sustainable expansion.' },
-  { id: 'replication',      lif: 'WHAT NEXT', name: 'Replication Playbook',          desc: 'Document the essential elements of your model in a transferable guide that others can adapt and implement.' },
-  { id: 'impact-framework', lif: 'WHAT NEXT', name: 'Impact Measurement Framework',  desc: 'Design a rigorous, mixed-methods approach to measuring and communicating the impact of your school design.' },
+  { id: 'codifying',               lif: 'WHAT NEXT', name: 'Best Practice Codification',        desc: 'Build systems to document, codify, and share best practices for consistent quality and scalability.' },
+  { id: 'sharing',                 lif: 'WHAT NEXT', name: 'System-Wide Knowledge Sharing',     desc: 'Spread successful practices and R&D learnings system-wide through structured knowledge-sharing channels.' },
+  { id: 'landscape-analysis',      lif: 'WHAT NEXT', name: 'Landscape Analysis',                desc: 'Analyze the education landscape to identify promising external practices before committing to scaling.' },
+  { id: 'theory-of-change',        lif: 'WHAT NEXT', name: 'Theory of Change Development',      desc: 'Develop a clear, vision-aligned theory of change connecting initiatives to desired outcomes.' },
+  { id: 'scaling',                 lif: 'WHAT NEXT', name: 'Sustainable Scaling Strategy',      desc: 'Sustainably expand proven, high-impact initiatives to benefit more learners across the system.' },
 ];
 
 export default function Moves() {
