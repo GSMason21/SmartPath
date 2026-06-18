@@ -2,145 +2,164 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--brand-dark-bg);
 }
 
-.header {
-  border-bottom: 1px solid var(--gray-100);
-  padding: 16px 24px;
-  background: var(--white);
-}
-
-.headerInner {
-  max-width: 900px;
-  margin: 0 auto;
+/* ── Minimal home header ──────────────────────────── */
+.homeHeader {
+  padding: 28px 40px;
   display: flex;
   align-items: center;
-  gap: 12px;
 }
 
-.logo {
-  width: 40px;
-  height: 40px;
-  background: var(--teal-50);
-  border-radius: 10px;
+.logoLink {
   display: flex;
   align-items: center;
-  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.15s;
+  text-decoration: none;
 }
 
-.siteTitle {
-  font-family: 'Lora', serif;
-  font-size: 18px;
-  font-weight: 500;
-  font-style: italic;
-  color: var(--gray-900);
-  line-height: 1.2;
+.logoLink:hover { opacity: 0.8; }
+
+.logoImg {
+  height: 38px;
+  width: auto;
+  filter: brightness(0) invert(1);
 }
 
-.siteSubtitle {
-  font-size: 12px;
-  color: var(--gray-400);
-}
-
+/* ── Main content ─────────────────────────────────── */
 .main {
   flex: 1;
-  max-width: 900px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 60px 24px 80px;
+  padding: 32px 40px 80px;
   width: 100%;
 }
 
 .intro {
-  margin-bottom: 40px;
+  margin-bottom: 48px;
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+  margin-bottom: 14px;
 }
 
 .introTitle {
-  font-family: 'Lora', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--gray-900);
-  margin-bottom: 12px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  line-height: 1.1;
+  margin-bottom: 16px;
 }
 
 .introText {
   font-size: 1rem;
-  color: var(--gray-600);
-  max-width: 560px;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 480px;
   line-height: 1.7;
 }
 
+/* ── Tool grid ────────────────────────────────────── */
 .toolGrid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
 .toolCard {
   display: flex;
-  align-items: center;
-  gap: 20px;
-  background: var(--white);
-  border: 1px solid var(--gray-100);
-  border-radius: var(--radius-xl);
-  padding: 24px;
-  transition: box-shadow 0.15s, border-color 0.15s;
+  flex-direction: column;
+  gap: 0;
+  background: var(--brand-light-bg);
+  border-radius: var(--card-radius);
+  padding: 28px;
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.2s, transform 0.2s;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .toolCard:hover {
-  border-color: var(--teal-100);
-  box-shadow: 0 4px 16px rgba(28, 114, 147, 0.08);
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-3px);
 }
 
 .toolIcon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-lg);
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-bottom: 20px;
 }
 
 .toolText {
   flex: 1;
 }
 
-.toolTitle {
-  font-family: 'Lora', serif;
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: var(--gray-900);
-  margin-bottom: 2px;
-}
-
 .toolSubtitle {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.65rem;
+  font-weight: 700;
   color: var(--gray-400);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+
+.toolTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--brand-dark-text);
+  margin-bottom: 10px;
+  line-height: 1.2;
 }
 
 .toolDesc {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: var(--gray-600);
   line-height: 1.6;
+  margin-bottom: 20px;
 }
 
 .toolArrow {
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--brand-accent);
 }
 
+/* ── Footer ───────────────────────────────────────── */
 .footer {
-  padding: 20px 24px;
+  padding: 24px 40px;
   text-align: center;
-  font-size: 13px;
-  color: var(--gray-400);
-  border-top: 1px solid var(--gray-100);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.footer a {
+  color: rgba(255, 255, 255, 0.35);
+  text-decoration: none;
+  transition: color 0.15s;
 }
 
 .footer a:hover {
-  color: var(--teal-600);
+  color: var(--brand-accent);
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 640px) {
+  .homeHeader { padding: 20px 24px; }
+  .main { padding: 24px 24px 60px; }
+  .toolGrid { grid-template-columns: 1fr; }
+  .footer { padding: 20px 24px; }
 }

@@ -1,8 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+  /* Getting Smart brand tokens */
+  --brand-dark-bg:   #0B3D3E;
+  --brand-light-bg:  #F0EDE8;
+  --brand-accent:    #00C2CB;
+  --brand-dark-text: #0B2D3D;
+
+  /* Card style tokens */
+  --card-radius:       12px;
+  --card-shadow:       0 2px 12px rgba(11, 45, 61, 0.08);
+  --card-shadow-hover: 0 8px 32px rgba(11, 45, 61, 0.14);
+
+  /* LIF element colors (unchanged) */
   --teal-50:    #E3EFF4;
   --teal-100:   #B6E5EC;
   --teal-400:   #4cbecf;

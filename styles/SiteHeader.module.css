@@ -51,12 +51,12 @@
   transition: color 0.15s;
 }
 
-.toolsLink:hover { color: var(--teal-600); }
+.toolsLink:hover { color: var(--brand-dark-text); }
 
 .current {
   font-size: 13px;
   font-weight: 600;
-  color: var(--gray-700);
+  color: var(--brand-dark-text);
 }
 
 .returnBtn {
@@ -64,22 +64,22 @@
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  font-weight: 500;
-  color: var(--gray-600);
+  font-weight: 600;
+  color: var(--white);
+  background: var(--brand-dark-text);
   text-decoration: none;
-  padding: 7px 14px;
-  border: 1px solid var(--gray-200);
+  padding: 7px 16px;
+  border: none;
   border-radius: 999px;
   white-space: nowrap;
-  transition: all 0.15s;
+  transition: background 0.15s, opacity 0.15s;
   margin-left: auto;
   flex-shrink: 0;
 }
 
 .returnBtn:hover {
-  border-color: var(--teal-400);
-  color: var(--teal-600);
-  background: var(--teal-50);
+  background: var(--brand-dark-bg);
+  opacity: 0.9;
 }
 
 @media (max-width: 600px) {
