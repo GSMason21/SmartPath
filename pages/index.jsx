@@ -54,7 +54,7 @@ export default function Home() {
             className={styles.logoLink}
           >
             <Image
-              src="/logo-teal.svg"
+              src="/logo-white.svg"
               alt="Getting Smart"
               width={140}
               height={40}
