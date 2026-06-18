@@ -5,161 +5,165 @@
   background: var(--brand-dark-bg);
 }
 
-/* ── Minimal home header ──────────────────────────── */
+/* ── Header ───────────────────────────────────────── */
 .homeHeader {
-  padding: 28px 40px;
-  display: flex;
-  align-items: center;
+  padding: 32px 48px;
+  flex-shrink: 0;
 }
 
 .logoLink {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   opacity: 1;
   transition: opacity 0.15s;
   text-decoration: none;
 }
 
-.logoLink:hover { opacity: 0.8; }
+.logoLink:hover { opacity: 0.75; }
 
 .logoImg {
-  height: 38px;
+  height: 36px;
   width: auto;
   filter: brightness(0) invert(1);
 }
 
-/* ── Main content ─────────────────────────────────── */
+/* ── Main — vertically centered ───────────────────── */
 .main {
   flex: 1;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 32px 40px 80px;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px 80px;
 }
 
+/* ── Intro ────────────────────────────────────────── */
 .intro {
-  margin-bottom: 48px;
+  text-align: center;
+  margin-bottom: 52px;
 }
 
 .eyebrow {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--brand-accent);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .introTitle {
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-size: clamp(1.75rem, 4vw, 2.6rem);
   font-weight: 900;
   letter-spacing: -0.03em;
   color: #ffffff;
   line-height: 1.1;
-  margin-bottom: 16px;
-}
-
-.introText {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.6);
-  max-width: 480px;
-  line-height: 1.7;
 }
 
 /* ── Tool grid ────────────────────────────────────── */
 .toolGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 860px;
 }
 
+/* ── Card ─────────────────────────────────────────── */
 .toolCard {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  background: var(--brand-light-bg);
-  border-radius: var(--card-radius);
-  padding: 28px;
-  box-shadow: var(--card-shadow);
-  transition: box-shadow 0.2s, transform 0.2s;
-  cursor: pointer;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 36px 32px 28px;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* cyan accent bar that slides in from top on hover */
+.toolCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--brand-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.22s ease;
 }
 
 .toolCard:hover {
-  box-shadow: var(--card-shadow-hover);
-  transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 48px rgba(11, 45, 61, 0.18);
 }
 
+.toolCard:hover::before {
+  transform: scaleX(1);
+}
+
+/* ── Card internals ───────────────────────────────── */
 .toolIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-bottom: 20px;
+  color: var(--brand-accent);
+  margin-bottom: 24px;
+  line-height: 1;
 }
 
-.toolText {
-  flex: 1;
-}
-
-.toolSubtitle {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--gray-400);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin-bottom: 6px;
-}
-
-.toolTitle {
-  font-size: 1.25rem;
+.toolLabel {
+  font-size: 1.4rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   color: var(--brand-dark-text);
   margin-bottom: 10px;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
-.toolDesc {
+.toolTagline {
   font-size: 0.875rem;
   color: var(--gray-600);
   line-height: 1.6;
-  margin-bottom: 20px;
+  flex: 1;
+  margin-bottom: 28px;
 }
 
-.toolArrow {
-  display: flex;
+.toolCta {
+  display: inline-flex;
   align-items: center;
-  color: var(--brand-accent);
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--brand-dark-text);
+  transition: gap 0.15s;
+}
+
+.toolCard:hover .toolCta {
+  gap: 10px;
 }
 
 /* ── Footer ───────────────────────────────────────── */
 .footer {
-  padding: 24px 40px;
+  padding: 24px 48px;
   text-align: center;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.22);
 }
 
 .footer a {
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.3);
   text-decoration: none;
   transition: color 0.15s;
 }
 
-.footer a:hover {
-  color: var(--brand-accent);
-}
+.footer a:hover { color: var(--brand-accent); }
 
 /* ── Responsive ───────────────────────────────────── */
-@media (max-width: 640px) {
-  .homeHeader { padding: 20px 24px; }
-  .main { padding: 24px 24px 60px; }
+@media (max-width: 680px) {
+  .homeHeader { padding: 24px; }
+  .main { padding: 0 24px 60px; }
   .toolGrid { grid-template-columns: 1fr; }
   .footer { padding: 20px 24px; }
 }
