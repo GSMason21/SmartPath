@@ -10,32 +10,34 @@
 }
 
 .pageTitle {
-  padding: 36px 0 8px;
+  padding: 40px 0 12px;
 }
 
 .title {
-  font-family: 'Lora', serif;
-  font-size: 28px;
-  font-weight: 500;
-  font-style: italic;
-  color: var(--gray-900);
-  margin-bottom: 6px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--brand-dark-text);
+  margin-bottom: 8px;
+  line-height: 1.1;
 }
 
 .subtitle {
-  font-size: 14px;
-  color: var(--gray-400);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-600);
   line-height: 1.6;
   max-width: 540px;
   margin-bottom: 16px;
 }
 
 .intro {
-  font-size: 15px;
+  font-size: 0.9rem;
   color: var(--gray-600);
   line-height: 1.8;
-  max-width: 680px;
-  border-left: 3px solid var(--teal-100);
+  max-width: 640px;
+  border-left: 3px solid var(--brand-accent);
   padding-left: 16px;
 }
 

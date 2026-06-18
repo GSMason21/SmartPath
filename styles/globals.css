@@ -45,7 +45,7 @@ html { font-size: 16px; }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background: #FAFAF8;
+  background: var(--brand-light-bg);
   color: var(--gray-900);
   line-height: 1.6;
   min-height: 100vh;

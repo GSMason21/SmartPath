@@ -153,18 +153,18 @@ export default function SmartPath() {
   return (
     <>
       <Head>
-        <title>SmartPath — Getting Smart</title>
+        <title>Learn — Getting Smart</title>
         <meta name="description" content="Generate professional learning modules grounded in the Getting Smart Learning Innovation Framework." />
       </Head>
 
       <div className={styles.page}>
-        <SiteHeader currentTool="SmartPath" />
+        <SiteHeader currentTool="Learn" />
 
         <main className={styles.main}>
           <div className={styles.pageTitle}>
-            <h1 className={styles.title}>SmartPath</h1>
+            <h1 className={styles.title}>Learn</h1>
             <p className={styles.subtitle}>Generate professional learning modules grounded in the Getting Smart Learning Innovation Framework.</p>
-            <p className={styles.intro}>SmartPath is a professional learning tool powered by Getting Smart&apos;s content library and the Learning Innovation Framework. Describe what you want to learn — a topic, a challenge, or a question — and SmartPath will surface the most relevant Getting Smart articles, podcasts, and whitepapers, then build you a structured learning module complete with a curated reading sequence, key concepts, and actionable outcomes. Whether you&apos;re exploring a new approach to school design or deepening your practice in a specific area, SmartPath turns Getting Smart&apos;s decade of thought leadership into a personalized learning path in seconds.</p>
+            <p className={styles.intro}>Describe what you want to learn — a topic, a challenge, or a question — and Learn will surface the most relevant Getting Smart articles, podcasts, and whitepapers, then build you a structured module with a curated reading sequence, key concepts, and actionable outcomes.</p>
           </div>
           <SearchBox
             onSearch={runSearch}

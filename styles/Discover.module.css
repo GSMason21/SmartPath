@@ -21,11 +21,13 @@
 }
 
 .title {
-  font-family: 'Lora', serif;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 2rem;
-  font-weight: 500;
-  color: var(--gray-900);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--brand-dark-text);
   margin-bottom: 8px;
+  line-height: 1.1;
 }
 
 .subtitle {
@@ -272,9 +274,9 @@
 }
 
 .rateBtn.up:hover:not(:disabled) {
-  border-color: #1c7293;
-  color: #1c7293;
-  background: #E3EFF4;
+  border-color: var(--brand-accent);
+  color: var(--brand-dark-text);
+  background: rgba(0, 194, 203, 0.08);
 }
 
 .rateBtn.mid:hover:not(:disabled) {
