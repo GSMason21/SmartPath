@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 40px;
+  padding: 24px 40px;
 }
 
 .navLogo {
@@ -23,7 +23,7 @@
 
 .navLogo:hover { opacity: 0.8; }
 
-.navLogo img { height: 34px; width: auto; }
+.navLogo img { height: 102px; width: auto; }
 
 .navLink {
   font-family: 'Raleway', system-ui, sans-serif;
