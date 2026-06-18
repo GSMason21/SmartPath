@@ -1,4 +1,4 @@
-.page { min-height: 100vh; }
+.page { min-height: 100vh; background: var(--teal-50); }
 
 .main {
   max-width: 780px;
