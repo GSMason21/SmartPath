@@ -60,14 +60,21 @@ export default function Home() {
 
       <div className={styles.page}>
 
+        {/* ── Nav ──────────────────────────────────────── */}
+        <header className={styles.nav}>
+          <a href="https://www.gettingsmart.com" target="_blank" rel="noopener noreferrer" className={styles.navLogo}>
+            <Image src="/logo-wordmark.png" alt="Getting Smart" width={160} height={45} priority />
+          </a>
+          <a href="https://www.gettingsmart.com" target="_blank" rel="noopener noreferrer" className={styles.navLink}>
+            Visit GettingSmart.com
+          </a>
+        </header>
+
         {/* ── Hero ─────────────────────────────────────── */}
         <section className={styles.hero}>
           <div className={`${styles.bub} ${styles.b1}`} />
           <div className={`${styles.bub} ${styles.b2}`} />
           <div className={`${styles.bub} ${styles.b3}`} />
-          <div className={styles.markWrap}>
-            <Image src="/logo-icon-teal.png" alt="" width={54} height={54} />
-          </div>
           <div className={styles.heroInner}>
             <p className={styles.heroEyebrow}>The Getting Smart Tool Library</p>
             <h1 className={styles.heroH1}>Start where it matters most.</h1>

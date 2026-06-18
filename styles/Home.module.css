@@ -6,6 +6,36 @@
   background: #ffffff;
 }
 
+/* ── Nav ───────────────────────────────────────────── */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+}
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.15s;
+}
+
+.navLogo:hover { opacity: 0.8; }
+
+.navLogo img { height: 34px; width: auto; }
+
+.navLink {
+  font-family: 'Raleway', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1F232A;
+  text-decoration: none;
+  transition: color 0.12s;
+}
+
+.navLink:hover { color: #155A75; }
+
 /* ── Bubble drift animation ───────────────────────── */
 @keyframes gsDrift {
   0%, 100% { transform: translate(0, 0); }
@@ -18,7 +48,7 @@
 
 /* ── Hero panel ────────────────────────────────────── */
 .hero {
-  margin: 16px 40px 0;
+  margin: 0 40px 0;
   background: linear-gradient(155deg, #1A1740 0%, #1C7293 130%);
   border-radius: 40px;
   padding: 76px 64px 112px;
@@ -53,15 +83,6 @@
   width: 46px; height: 46px;
   right: 90px; top: 80px;
   background: #4CBECF;
-}
-
-/* Decorative tree icon */
-.markWrap {
-  position: absolute;
-  right: 48px; bottom: 40px;
-  width: 54px; height: 54px;
-  opacity: 0.9;
-  pointer-events: none;
 }
 
 /* Hero text */
