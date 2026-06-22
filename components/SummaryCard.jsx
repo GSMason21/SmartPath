@@ -1,15 +1,26 @@
 import styles from '../styles/SummaryCard.module.css';
 
 export default function SummaryCard({ summary, onSelectOption, onReset }) {
+  const themes = Array.isArray(summary.themes) ? summary.themes : [];
+  const summaryText = typeof summary.summary === 'string'
+    ? summary.summary
+    : Array.isArray(summary.summary) ? summary.summary.join(' ') : '';
+
   return (
     <div className={styles.card}>
       <h2 className={styles.heading}>Getting Smart on: {summary.query}</h2>
 
-      <div className={styles.paragraphs}>
-        {summary.summary.map((p, i) => (
-          <p key={i}>{p}</p>
-        ))}
-      </div>
+      <p className={styles.summaryParagraph}>{summaryText}</p>
+
+      {themes.length > 0 && (
+        <div className={styles.themes}>
+          {themes.map((theme, i) => (
+            theme.url
+              ? <a key={i} href={theme.url} target="_blank" rel="noopener noreferrer" className={styles.themeTag}>{theme.label}</a>
+              : <span key={i} className={styles.themeTag}>{theme.label}</span>
+          ))}
+        </div>
+      )}
 
       <p className={styles.prompt}>Which angle would you like to explore?</p>
 

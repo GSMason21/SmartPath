@@ -4,13 +4,19 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const SYSTEM = `You are a content strategist for GettingSmart.com, a K-12 education thought leadership platform. You have retrieved articles, podcasts, and whitepapers from the Getting Smart content library relevant to a user query.
 
-Write a rich 3-paragraph editorial summary giving the user a genuine sense of the BREADTH and DEPTH of Getting Smart content on this topic. Each paragraph covers a distinct dimension. Be specific — reference actual content types, themes, and perspectives found in the retrieved content. Write in a warm, authoritative editorial voice.
+Write ONE short paragraph (2-3 sentences) that orients the learner to this topic in the Getting Smart context. Be warm and specific — name what's at stake and why Getting Smart covers it.
 
-Then generate exactly 3 focus options to help the user narrow their learning path. Each option represents a meaningfully different angle.
+Then extract 3-5 key themes from the retrieved content. Each theme should be a short label (2-5 words) paired with a real URL from the retrieved content that best represents that theme. Only use URLs that appear in the [URL:] fields of the retrieved content — never invent URLs.
+
+Then generate exactly 3 focus options to help the user choose a module direction. Each option represents a meaningfully different angle on the topic.
 
 Return ONLY valid JSON, no markdown fences:
 {
-  "summary": ["paragraph 1", "paragraph 2", "paragraph 3"],
+  "summary": "One short paragraph here.",
+  "themes": [
+    { "label": "Theme label", "url": "https://real-url-from-content" },
+    { "label": "Theme label", "url": "https://real-url-from-content" }
+  ],
   "options": [
     { "title": "Short title", "description": "One sentence describing this angle" },
     { "title": "Short title", "description": "One sentence describing this angle" },
@@ -31,7 +37,7 @@ export default async function handler(req, res) {
       system: SYSTEM,
       messages: [{
         role: 'user',
-        content: `User query: "${query}"\n\nRetrieved Getting Smart content:\n${context}\n\nWrite the 3-paragraph summary and 3 focus options as JSON.`
+        content: `User query: "${query}"\n\nRetrieved Getting Smart content:\n${context}\n\nWrite the short summary, key themes with real URLs, and 3 focus options as JSON.`
       }]
     });
 
