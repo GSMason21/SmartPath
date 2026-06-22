@@ -93,19 +93,12 @@ export default function SmartPath() {
     setLoading(true);
 
     try {
-      // Re-search with refined query
+      // Re-search with refined query (skip rewrite — refined query is already well-formed)
       setStatus('Refining search for your chosen focus…');
-      const rewriteRes = await fetch('/api/rewrite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: refinedQuery }),
-      });
-      const { rewritten, podcastIntent } = await rewriteRes.json();
-
       const searchRes = await fetch('/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: rewritten, podcastIntent }),
+        body: JSON.stringify({ query: refinedQuery }),
       });
       const refined = await searchRes.json();
 
