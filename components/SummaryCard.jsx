@@ -13,13 +13,16 @@ export default function SummaryCard({ summary, onSelectOption, onReset }) {
       <p className={styles.summaryParagraph}>{summaryText}</p>
 
       {themes.length > 0 && (
-        <div className={styles.themes}>
+        <ul className={styles.themeList}>
           {themes.map((theme, i) => (
-            theme.url
-              ? <a key={i} href={theme.url} target="_blank" rel="noopener noreferrer" className={styles.themeTag}>{theme.label}</a>
-              : <span key={i} className={styles.themeTag}>{theme.label}</span>
+            <li key={i}>
+              {theme.url
+                ? <a href={theme.url} target="_blank" rel="noopener noreferrer" className={styles.themeLink}>{theme.label}</a>
+                : <span>{theme.label}</span>
+              }
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       <p className={styles.prompt}>Which angle would you like to explore?</p>
