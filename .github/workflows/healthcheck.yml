@@ -55,7 +55,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"query":"personalized learning"}')
           B=$(cat /tmp/b)
-          [[ "$ST" == "200" ]] && echo "$B" | grep -q '"results"' \
+          [[ "$ST" == "200" ]] && echo "$B" | grep -q '"matches"' \
             && OK=1 || OK=0
           check "/api/search" "$ST" "$B" "$OK"
 
