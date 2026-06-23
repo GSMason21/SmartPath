@@ -110,15 +110,52 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Send report email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.GMAIL_USERNAME }}
-          password: ${{ secrets.GMAIL_APP_PASSWORD }}
-          subject: ${{ steps.tests.outputs.subject }}
-          to: mason@gettingsmart.com
-          from: SmartPath Monitor <${{ secrets.GMAIL_USERNAME }}>
-          body: ${{ steps.tests.outputs.body }}
+      - name: Create Asana task
+        env:
+          ASANA_PAT: ${{ secrets.ASANA_PAT }}
+          SUBJECT: ${{ steps.tests.outputs.subject }}
+          BODY: ${{ steps.tests.outputs.body }}
+          PASSED: ${{ steps.tests.outputs.passed }}
+          TOTAL: ${{ steps.tests.outputs.total }}
+        run: |
+          # Get workspace GID and user GID
+          WORKSPACE=$(curl -s "https://app.asana.com/api/1.0/workspaces" \
+            -H "Authorization: Bearer $ASANA_PAT" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['data'][0]['gid'])")
+          ME=$(curl -s "https://app.asana.com/api/1.0/users/me" \
+            -H "Authorization: Bearer $ASANA_PAT" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['gid'])")
+
+          # Create task (use python to safely encode the JSON body)
+          TASK_GID=$(python3 - <<PYEOF
+          import json, urllib.request, os
+          pat  = os.environ["ASANA_PAT"]
+          data = {
+            "data": {
+              "name":       os.environ["SUBJECT"],
+              "notes":      os.environ["BODY"],
+              "workspace":  "$WORKSPACE",
+              "assignee":   "$ME",
+              "due_on":     __import__("datetime").date.today().isoformat(),
+            }
+          }
+          req = urllib.request.Request(
+            "https://app.asana.com/api/1.0/tasks",
+            data=json.dumps(data).encode(),
+            headers={"Authorization": f"Bearer {pat}", "Content-Type": "application/json"},
+          )
+          resp = json.loads(urllib.request.urlopen(req).read())
+          print(resp["data"]["gid"])
+          PYEOF
+          )
+
+          # Auto-complete the task if all checks passed
+          if [ "$PASSED" = "$TOTAL" ]; then
+            curl -s -X PUT "https://app.asana.com/api/1.0/tasks/$TASK_GID" \
+              -H "Authorization: Bearer $ASANA_PAT" \
+              -H "Content-Type: application/json" \
+              -d '{"data":{"completed":true}}' > /dev/null
+            echo "All passed — task created and auto-completed."
+          else
+            echo "Failures detected — task left open in Asana."
+          fi
