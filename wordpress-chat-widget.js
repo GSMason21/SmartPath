@@ -6,7 +6,7 @@
  */
 
 (function () {
-  const TOOLS_URL = 'https://tools.gettingsmart.com'; // ← update this
+  const TOOLS_URL = 'https://tools.gettingsmart.com';
   const CHAT_URL  = TOOLS_URL + '/ask';
 
   // ── Styles ──────────────────────────────────────────────────────────────
