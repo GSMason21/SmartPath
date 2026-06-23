@@ -98,7 +98,7 @@
       height: 28px;
       display: block;
     }
-    #gs-chat-close {
+    #gs-chat-close, #gs-chat-expand {
       background: none;
       border: none;
       cursor: pointer;
@@ -109,7 +109,16 @@
       align-items: center;
       justify-content: center;
     }
-    #gs-chat-close:hover { background: #F7F7F5; color: #1A1A18; }
+    #gs-chat-close:hover, #gs-chat-expand:hover { background: #F7F7F5; color: #1A1A18; }
+    #gs-chat-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    #gs-chat-panel.expanded {
+      width: min(640px, calc(100vw - 32px));
+      height: min(80vh, 800px);
+    }
 
     @media (max-width: 480px) {
       #gs-chat-panel {
@@ -147,11 +156,23 @@
         </div>
         Ask GS
       </div>
-      <button id="gs-chat-close" aria-label="Close chat">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
+      <div id="gs-chat-header-actions">
+        <button id="gs-chat-expand" aria-label="Expand chat">
+          <svg id="gs-icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+            <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+          </svg>
+          <svg id="gs-icon-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" style="display:none">
+            <polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/>
+            <line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/>
+          </svg>
+        </button>
+        <button id="gs-chat-close" aria-label="Close chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
     </div>
     <iframe id="gs-chat-iframe" src="" title="Ask GS — Getting Smart Research Assistant" allow="clipboard-write"></iframe>
   `;
@@ -208,6 +229,12 @@
 
   btn.addEventListener('click', () => isOpen ? close() : open());
   document.getElementById('gs-chat-close').addEventListener('click', close);
+
+  document.getElementById('gs-chat-expand').addEventListener('click', () => {
+    const expanded = panel.classList.toggle('expanded');
+    document.getElementById('gs-icon-expand').style.display  = expanded ? 'none'  : 'block';
+    document.getElementById('gs-icon-collapse').style.display = expanded ? 'block' : 'none';
+  });
 
   // Respond to context requests from the iframe
   window.addEventListener('message', (e) => {

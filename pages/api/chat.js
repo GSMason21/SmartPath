@@ -121,7 +121,7 @@ Return ONLY valid JSON, no explanation:
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { messages, query, pageContext } = req.body;
+  const { messages, query, pageContext, isEmbedded } = req.body;
   if (!messages || !query) return res.status(400).json({ error: 'messages and query required' });
 
   res.setHeader('Content-Type', 'text/event-stream');
@@ -147,7 +147,10 @@ export default async function handler(req, res) {
     const contextNote = pageContext?.url
       ? `\n\nCurrent page context: The user is reading "${pageContext.title}" at ${pageContext.url}. If their question relates to this content, acknowledge it naturally and use it to inform your response.`
       : '';
-    const dynamicSystem = SYSTEM + contextNote;
+    const widgetNote = isEmbedded
+      ? '\n\nYou are responding inside a compact chat widget. Keep your response to 2-3 short paragraphs maximum. Be direct and conversational — one strong idea, well expressed. If there is more to explore, end with a single focused follow-up question.'
+      : '';
+    const dynamicSystem = SYSTEM + contextNote + widgetNote;
 
     const chatHistory = messages.slice(-10).map(m => ({
       role: m.role,
@@ -164,7 +167,7 @@ export default async function handler(req, res) {
     let fullText = '';
     const stream = anthropic.messages.stream({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
+      max_tokens: isEmbedded ? 400 : 1024,
       system: dynamicSystem,
       messages: chatHistory,
     });

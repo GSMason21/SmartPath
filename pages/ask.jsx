@@ -224,7 +224,7 @@ export default function Ask() {
       const resp = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: allMessages, query, pageContext }),
+        body: JSON.stringify({ messages: allMessages, query, pageContext, isEmbedded }),
       });
 
       const reader = resp.body.getReader();
