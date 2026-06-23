@@ -1,0 +1,124 @@
+name: SmartPath Health Check
+
+on:
+  schedule:
+    - cron: '0 15 * * *'   # 8:00am PDT (15:00 UTC)
+  workflow_dispatch:         # allow manual runs from the Actions tab
+
+jobs:
+  healthcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run endpoint tests
+        id: tests
+        run: |
+          BASE="https://tools.gettingsmart.com"
+          PASSED=0
+          LINES=()
+
+          check() {
+            local label="$1" status="$2" body="$3" ok="$4"
+            if [ "$ok" = "1" ]; then
+              PASSED=$((PASSED + 1))
+              LINES+=("✓ PASS  $label  (HTTP $status)")
+            else
+              local snippet
+              snippet=$(echo "$body" | tr -d '\n' | cut -c1-200)
+              LINES+=("✗ FAIL  $label  (HTTP $status) — $snippet")
+            fi
+          }
+
+          # 1. /api/chat — SSE stream
+          ST=$(curl -s --max-time 35 -o /tmp/b -w "%{http_code}" \
+            -X POST "$BASE/api/chat" \
+            -H "Content-Type: application/json" \
+            -d '{"messages":[{"role":"user","content":"What is project-based learning?"}],"query":"What is project-based learning?"}')
+          B=$(cat /tmp/b)
+          [[ "$ST" == "200" ]] && echo "$B" | grep -q '"type":"done"' && ! echo "$B" | grep -q '"type":"error"' \
+            && OK=1 || OK=0
+          check "/api/chat" "$ST" "$B" "$OK"
+
+          # 2. /api/discover
+          ST=$(curl -s --max-time 20 -o /tmp/b -w "%{http_code}" \
+            -X POST "$BASE/api/discover" \
+            -H "Content-Type: application/json" \
+            -d '{}')
+          B=$(cat /tmp/b)
+          [[ "$ST" == "200" ]] && [ ${#B} -gt 10 ] && ! echo "$B" | grep -q '"error"' \
+            && OK=1 || OK=0
+          check "/api/discover" "$ST" "$B" "$OK"
+
+          # 3. /api/search
+          ST=$(curl -s --max-time 20 -o /tmp/b -w "%{http_code}" \
+            -X POST "$BASE/api/search" \
+            -H "Content-Type: application/json" \
+            -d '{"query":"personalized learning"}')
+          B=$(cat /tmp/b)
+          [[ "$ST" == "200" ]] && echo "$B" | grep -q '"results"' \
+            && OK=1 || OK=0
+          check "/api/search" "$ST" "$B" "$OK"
+
+          # 4. /api/suggestions
+          ST=$(curl -s --max-time 20 -o /tmp/b -w "%{http_code}" \
+            -X POST "$BASE/api/suggestions" \
+            -H "Content-Type: application/json" \
+            -d '{"title":"How Schools Are Using AI"}')
+          B=$(cat /tmp/b)
+          [[ "$ST" == "200" ]] && echo "$B" | grep -q '"questions"' \
+            && OK=1 || OK=0
+          check "/api/suggestions" "$ST" "$B" "$OK"
+
+          # 5. /api/rewrite
+          ST=$(curl -s --max-time 15 -o /tmp/b -w "%{http_code}" \
+            -X POST "$BASE/api/rewrite" \
+            -H "Content-Type: application/json" \
+            -d '{"query":"what are some good examples of project based learning?"}')
+          B=$(cat /tmp/b)
+          [[ "$ST" == "200" ]] && [ ${#B} -gt 3 ] \
+            && OK=1 || OK=0
+          check "/api/rewrite" "$ST" "$B" "$OK"
+
+          # 6. /api/moves-search
+          ST=$(curl -s --max-time 20 -o /tmp/b -w "%{http_code}" \
+            -X POST "$BASE/api/moves-search" \
+            -H "Content-Type: application/json" \
+            -d '{"moveName":"Student-Led Conferences","moveDesc":"Students present their work to families"}')
+          B=$(cat /tmp/b)
+          [[ "$ST" == "200" ]] && echo "$B" | grep -q '"results"\|"matches"\|\[\]' \
+            && OK=1 || OK=0
+          check "/api/moves-search" "$ST" "$B" "$OK"
+
+          # Build report
+          DATE=$(date '+%B %d, %Y')
+          TOTAL=6
+          REPORT_BODY=$(printf '%s\n' "${LINES[@]}")
+          SUBJECT="SmartPath Health Check — $DATE — $PASSED/$TOTAL passed"
+
+          echo "passed=$PASSED" >> "$GITHUB_OUTPUT"
+          echo "total=$TOTAL"   >> "$GITHUB_OUTPUT"
+          echo "subject=$SUBJECT" >> "$GITHUB_OUTPUT"
+          {
+            echo "body<<EOF"
+            echo "SmartPath Health Check — $DATE"
+            echo ""
+            printf '%s\n' "${LINES[@]}"
+            echo ""
+            echo "Result: $PASSED/$TOTAL passed"
+            echo ""
+            echo "Full run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Send report email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: ${{ steps.tests.outputs.subject }}
+          to: mason@gettingsmart.com
+          from: SmartPath Monitor <${{ secrets.GMAIL_USERNAME }}>
+          body: ${{ steps.tests.outputs.body }}
