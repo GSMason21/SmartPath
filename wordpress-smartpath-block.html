@@ -1,0 +1,31 @@
+<!-- Paste this into a WordPress "Custom HTML" block on your homepage -->
+<!-- Replace the src URL with your actual Vercel deployment URL if different -->
+
+<style>
+  .gs-smartpath-embed {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .gs-smartpath-embed iframe {
+    width: 100%;
+    height: 720px;
+    border: none;
+    display: block;
+  }
+  @media (max-width: 900px) {
+    .gs-smartpath-embed iframe { height: 900px; }
+  }
+  @media (max-width: 600px) {
+    .gs-smartpath-embed iframe { height: 1100px; }
+  }
+</style>
+
+<div class="gs-smartpath-embed">
+  <iframe
+    src="https://tools.gettingsmart.com/?embed=1"
+    title="Getting Smart Tool Library"
+    loading="lazy"
+    scrolling="no"
+  ></iframe>
+</div>

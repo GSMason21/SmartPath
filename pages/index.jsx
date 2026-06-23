@@ -50,7 +50,12 @@ const JOURNEYS = [
   },
 ];
 
-export default function Home() {
+export async function getServerSideProps({ query }) {
+  return { props: { isEmbed: query.embed === '1' } };
+}
+
+export default function Home({ isEmbed }) {
+
   return (
     <>
       <Head>
@@ -58,20 +63,22 @@ export default function Home() {
         <meta name="description" content="Three ways into everything Getting Smart has built — Ask, Discover, or Learn." />
       </Head>
 
-      <div className={styles.page}>
+      <div className={`${styles.page} ${isEmbed ? styles.pageEmbed : ''}`}>
 
         {/* ── Nav ──────────────────────────────────────── */}
-        <header className={styles.nav}>
-          <a href="https://www.gettingsmart.com" target="_blank" rel="noopener noreferrer" className={styles.navLogo}>
-            <Image src="/logo-wordmark.png" alt="Getting Smart" width={160} height={45} priority />
-          </a>
-          <a href="https://www.gettingsmart.com" target="_blank" rel="noopener noreferrer" className={styles.navLink}>
-            Visit GettingSmart.com
-          </a>
-        </header>
+        {!isEmbed && (
+          <header className={styles.nav}>
+            <a href="https://www.gettingsmart.com" target="_blank" rel="noopener noreferrer" className={styles.navLogo}>
+              <Image src="/logo-wordmark.png" alt="Getting Smart" width={160} height={45} priority />
+            </a>
+            <a href="https://www.gettingsmart.com" target="_blank" rel="noopener noreferrer" className={styles.navLink}>
+              Visit GettingSmart.com
+            </a>
+          </header>
+        )}
 
         {/* ── Hero ─────────────────────────────────────── */}
-        <section className={styles.hero}>
+        <section className={`${styles.hero} ${isEmbed ? styles.heroEmbed : ''}`}>
           <div className={`${styles.bub} ${styles.b1}`} />
           <div className={`${styles.bub} ${styles.b2}`} />
           <div className={`${styles.bub} ${styles.b3}`} />
@@ -87,7 +94,7 @@ export default function Home() {
         {/* ── Journey selector cards ────────────────────── */}
         <section className={styles.selectors}>
           {JOURNEYS.map(j => (
-            <Link key={j.id} href={j.href} className={`${styles.card} ${styles[j.id]}`}>
+            <Link key={j.id} href={j.href} className={`${styles.card} ${styles[j.id]}`} target={isEmbed ? '_top' : undefined}>
               <div className={styles.bar} />
               <div className={styles.cardBody}>
                 <div className={styles.cardTop}>

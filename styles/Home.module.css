@@ -229,6 +229,15 @@
 .learn .ic     { background: rgba(26, 23, 64, 0.08); }
 .learn .cta    { color: #4A3FA3; }
 
+/* ── Embed mode ────────────────────────────────────── */
+.pageEmbed {
+  min-height: auto;
+}
+
+.heroEmbed {
+  margin-top: 24px;
+}
+
 /* ── Responsive ────────────────────────────────────── */
 @media (max-width: 900px) {
   .hero    { padding: 52px 40px 80px; }
