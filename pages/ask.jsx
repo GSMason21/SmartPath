@@ -127,10 +127,14 @@ function Message({ message }) {
   return (
     <div className={styles.assistantMessage}>
       <div className={styles.avatar}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="#1c7293" strokeWidth="1.8" width="16" height="16">
-          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-        </svg>
+        {isEmbedded ? (
+          <img src="/logo-icon-teal.png" width="20" height="20" alt="Getting Smart" style={{ borderRadius: '50%', display: 'block' }} />
+        ) : (
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1c7293" strokeWidth="1.8" width="16" height="16">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        )}
       </div>
       <div className={styles.assistantContent}>
         {message.sources && message.sources.length > 0 && (
@@ -154,13 +158,14 @@ function Message({ message }) {
 }
 
 export default function Ask() {
-  const [messages, setMessages]      = useState([]);
-  const [input, setInput]            = useState('');
-  const [loading, setLoading]        = useState(false);
-  const [pageContext, setPageContext] = useState(null);
-  const [isEmbedded, setIsEmbedded]  = useState(false);
-  const bottomRef                    = useRef(null);
-  const inputRef                     = useRef(null);
+  const [messages, setMessages]              = useState([]);
+  const [input, setInput]                    = useState('');
+  const [loading, setLoading]                = useState(false);
+  const [pageContext, setPageContext]         = useState(null);
+  const [isEmbedded, setIsEmbedded]          = useState(false);
+  const [contextSuggestions, setContextSuggestions] = useState([]);
+  const bottomRef                            = useRef(null);
+  const inputRef                             = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -173,6 +178,14 @@ export default function Ask() {
     function handleMessage(e) {
       if (e.data?.type === 'gs-page-context') {
         setPageContext(e.data);
+        fetch('/api/suggestions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: e.data.title }),
+        })
+          .then(r => r.json())
+          .then(d => { if (Array.isArray(d.questions)) setContextSuggestions(d.questions); })
+          .catch(() => {});
       }
     }
     window.addEventListener('message', handleMessage);
@@ -291,10 +304,14 @@ export default function Ask() {
           {isEmpty ? (
             <div className={styles.empty}>
               <div className={styles.emptyIcon}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="#1c7293" strokeWidth="1.5" width="32" height="32">
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                </svg>
+                {isEmbedded ? (
+                  <img src="/logo-icon-teal.png" width="48" height="48" alt="Getting Smart" style={{ borderRadius: '50%', display: 'block' }} />
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#1c7293" strokeWidth="1.5" width="32" height="32">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                )}
               </div>
               <h1 className={styles.emptyTitle}>Ask GS</h1>
               <p className={styles.emptySubtitle}>
@@ -302,7 +319,7 @@ export default function Ask() {
                 grounded in Getting Smart&apos;s content library.
               </p>
               <div className={styles.suggested}>
-                {SUGGESTED.map(s => (
+                {(isEmbedded && contextSuggestions.length > 0 ? contextSuggestions : SUGGESTED).map(s => (
                   <button key={s} className={styles.suggestedBtn} onClick={() => { trackAskGSSuggestedQuestion(s); sendMessage(s); }}>
                     {s}
                   </button>

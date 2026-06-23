@@ -86,11 +86,17 @@
     #gs-chat-header-logo {
       width: 28px;
       height: 28px;
-      background: #E3EFF4;
-      border-radius: 6px;
+      border-radius: 50%;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
+    }
+    #gs-chat-header-logo img {
+      width: 28px;
+      height: 28px;
+      display: block;
     }
     #gs-chat-close {
       background: none;
@@ -137,10 +143,7 @@
     <div id="gs-chat-header">
       <div id="gs-chat-header-left">
         <div id="gs-chat-header-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#1c7293" stroke-width="1.8" width="16" height="16">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-          </svg>
+          <img src="${TOOLS_URL}/logo-icon-teal.png" alt="Getting Smart">
         </div>
         Ask GS
       </div>
