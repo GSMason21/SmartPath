@@ -94,7 +94,7 @@ export default function Home({ isEmbed }) {
         {/* ── Journey selector cards ────────────────────── */}
         <section className={styles.selectors}>
           {JOURNEYS.map(j => (
-            <Link key={j.id} href={j.href} className={`${styles.card} ${styles[j.id]}`} target={isEmbed ? '_top' : undefined}>
+            <Link key={j.id} href={j.href} className={`${styles.card} ${styles[j.id]}`} target={isEmbed ? '_blank' : undefined}>
               <div className={styles.bar} />
               <div className={styles.cardBody}>
                 <div className={styles.cardTop}>
