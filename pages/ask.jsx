@@ -115,7 +115,7 @@ function LIFAlignment({ tags }) {
   );
 }
 
-function Message({ message }) {
+function Message({ message, isEmbedded }) {
   if (message.role === 'user') {
     return (
       <div className={styles.userMessage}>
@@ -328,7 +328,7 @@ export default function Ask() {
             </div>
           ) : (
             <div className={styles.messages}>
-              {messages.map((m, i) => <Message key={m.id || i} message={m} />)}
+              {messages.map((m, i) => <Message key={m.id || i} message={m} isEmbedded={isEmbedded} />)}
               <div ref={bottomRef} />
             </div>
           )}

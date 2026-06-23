@@ -18,7 +18,8 @@ export default async function handler(req, res) {
   });
 
   try {
-    const questions = JSON.parse(msg.content[0].text.trim());
+    const raw = msg.content[0].text.trim().replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    const questions = JSON.parse(raw);
     res.json({ questions });
   } catch {
     res.status(500).json({ error: 'parse error' });
