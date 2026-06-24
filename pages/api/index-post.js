@@ -114,10 +114,11 @@ export default async function handler(req, res) {
     console.log(`[/api/index-post] Upserted ${pineconeId} — "${title}"`);
 
     // 4. Pre-compute related posts and cache them in WP post meta
-    // Fire and forget — don't block the response
-    cacheRelatedPosts(post_id, post_type, vector).catch(err =>
-      console.error('[/api/index-post] Related posts cache error:', err)
-    );
+    try {
+      await cacheRelatedPosts(post_id, post_type, vector);
+    } catch (err) {
+      console.error('[/api/index-post] Related posts cache error:', err);
+    }
 
     return res.status(200).json({
       success: true,
