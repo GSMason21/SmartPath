@@ -52,7 +52,16 @@ export default async function handler(req, res) {
       TYPES.map((type, i) => [type, scoreMatches(typeResps[i].matches)])
     );
 
-    return res.status(200).json({ matches, byType, count: matches.length });
+    // 4. Build context string for AI consumers (summarize, generate)
+    const context = matches
+      .slice(0, 15)
+      .map(m => {
+        const d = m.metadata || {};
+        return `[Source: ${d.title || ''}] [URL: ${d.url || ''}] [Type: ${d.type || ''}] [Date: ${d.date || ''}]\n${d.content || d.excerpt || ''}`;
+      })
+      .join('\n\n');
+
+    return res.status(200).json({ matches, byType, context, count: matches.length });
   } catch (err) {
     console.error('[/api/search]', err);
     return res.status(500).json({ error: err.message });
