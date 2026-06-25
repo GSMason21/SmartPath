@@ -59,27 +59,32 @@ ${context
 
 The themes array must use exact LIF element or sub-element names. The competencies must draw from the LIF competency language. The sequence should feel like a coherent learning journey through the Framework lens. Every step must end with a reflectionPrompt that anchors the content in the learner's own practice.`;
 
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
   try {
-    const msg = await client.messages.create({
+    const stream = client.messages.stream({
       model: 'claude-sonnet-4-6',
       max_tokens: 8000,
       system: SYSTEM,
       messages: [{ role: 'user', content: userPrompt }],
     });
 
-    const raw = (msg.content || []).find(b => b.type === 'text')?.text || '';
-    const start = raw.indexOf('{');
-    const end   = raw.lastIndexOf('}');
-    if (start === -1 || end === -1) throw new Error('No JSON in response');
+    for await (const event of stream) {
+      if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
+        res.write(`data: ${JSON.stringify({ type: 'text', text: event.delta.text })}\n\n`);
+      }
+    }
 
-    const module = JSON.parse(raw.slice(start, end + 1));
+    const finalMsg = await stream.finalMessage();
+    console.log('[/api/generate] usage:', finalMsg.usage);
 
-    // Log usage for cost monitoring
-    console.log('[/api/generate] usage:', msg.usage);
-
-    return res.status(200).json({ module });
+    res.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
+    res.end();
   } catch (err) {
     console.error('[/api/generate]', err);
-    return res.status(500).json({ error: err.message });
+    res.write(`data: ${JSON.stringify({ type: 'error', error: err.message })}\n\n`);
+    res.end();
   }
 }

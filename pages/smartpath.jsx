@@ -26,11 +26,12 @@ const CHIPS = [
 ];
 
 export default function SmartPath() {
-  const [status, setStatus]       = useState('');
-  const [error, setError]         = useState('');
-  const [summary, setSummary]     = useState(null);
-  const [module, setModule]       = useState(null);
-  const [loading, setLoading]     = useState(false);
+  const [status, setStatus]         = useState('');
+  const [error, setError]           = useState('');
+  const [summary, setSummary]       = useState(null);
+  const [module, setModule]         = useState(null);
+  const [loading, setLoading]       = useState(false);
+  const [streamBuffer, setStreamBuffer] = useState('');
 
   // Store search context between summary and module steps
   const searchStore = useRef({ query: '', context: '', matches: [] });
@@ -117,22 +118,56 @@ export default function SmartPath() {
 
   async function buildModule(query, context, matches) {
     setStatus('Building your learning module…');
+    setStreamBuffer('');
+
     const genRes = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, context, matches }),
     });
+
     if (!genRes.ok) {
       const err = await genRes.json();
       throw new Error(err.error || 'Generation failed');
     }
-    const { module } = await genRes.json();
-    setModule(module);
-    trackSmartPathModuleGenerated(
-      query,
-      module.estimatedTime,
-      module.frameworkAlignment?.primaryElement
-    );
+
+    const reader = genRes.body.getReader();
+    const decoder = new TextDecoder();
+    let lineBuffer = '';
+    let accumulatedText = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      lineBuffer += decoder.decode(value, { stream: true });
+      const lines = lineBuffer.split('\n');
+      lineBuffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = JSON.parse(line.slice(6));
+
+        if (data.type === 'text') {
+          accumulatedText += data.text;
+          setStreamBuffer(accumulatedText);
+        } else if (data.type === 'done') {
+          const start = accumulatedText.indexOf('{');
+          const end   = accumulatedText.lastIndexOf('}');
+          if (start === -1 || end === -1) throw new Error('No JSON in response');
+          const mod = JSON.parse(accumulatedText.slice(start, end + 1));
+          setStreamBuffer('');
+          setModule(mod);
+          trackSmartPathModuleGenerated(
+            query,
+            mod.estimatedTime,
+            mod.frameworkAlignment?.primaryElement
+          );
+        } else if (data.type === 'error') {
+          throw new Error(data.error);
+        }
+      }
+    }
   }
 
   function reset() {
@@ -140,6 +175,7 @@ export default function SmartPath() {
     setModule(null);
     setError('');
     setStatus('');
+    setStreamBuffer('');
     searchStore.current = { query: '', context: '', matches: [] };
   }
 
@@ -167,6 +203,12 @@ export default function SmartPath() {
 
           {status && <StatusBar message={status} />}
           {error  && <div className={styles.errorBar}><p>{error}</p></div>}
+
+          {streamBuffer && !module && (
+            <div className={styles.streamPreview}>
+              <pre>{streamBuffer}</pre>
+            </div>
+          )}
 
           {summary && !module && (
             <SummaryCard
