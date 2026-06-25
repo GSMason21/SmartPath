@@ -14,6 +14,23 @@ import {
   trackSmartPathPDF,
 } from '../lib/analytics';
 
+function parseStreamPreview(text) {
+  const out = {};
+  const titleM = text.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  if (titleM) out.title = titleM[1].replace(/\\"/g, '"');
+  const summaryM = text.match(/"summary"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  if (summaryM) out.summary = summaryM[1].replace(/\\n/g, ' ').replace(/\\"/g, '"');
+  const themesM = text.match(/"themes"\s*:\s*\[([\s\S]*?)\]/);
+  if (themesM) out.themes = [...themesM[1].matchAll(/"([^"]+)"/g)].map(m => m[1]);
+  const timeM = text.match(/"estimatedTime"\s*:\s*"([^"]+)"/);
+  if (timeM) out.estimatedTime = timeM[1];
+  const seqIdx = text.indexOf('"sequence"');
+  if (seqIdx !== -1) {
+    out.stepsStarted = (text.slice(seqIdx).match(/"title"\s*:/g) || []).length;
+  }
+  return out;
+}
+
 const CHIPS = [
   'Competency-based learning',
   'AI in education',
@@ -204,11 +221,41 @@ export default function SmartPath() {
           {status && <StatusBar message={status} />}
           {error  && <div className={styles.errorBar}><p>{error}</p></div>}
 
-          {streamBuffer && !module && (
-            <div className={styles.streamPreview}>
-              <pre>{streamBuffer}</pre>
-            </div>
-          )}
+          {streamBuffer && !module && (() => {
+            const p = parseStreamPreview(streamBuffer);
+            return (
+              <div className={styles.buildingCard}>
+                <div className={styles.buildingHeader}>
+                  <span className={styles.buildingDot} />
+                  <span>Building your module…</span>
+                  {p.estimatedTime && <span className={styles.buildingTime}>{p.estimatedTime}</span>}
+                </div>
+
+                {p.title
+                  ? <h2 className={styles.buildingTitle}>{p.title}</h2>
+                  : <div className={`${styles.shimmer} ${styles.shimmerTitle}`} />}
+
+                {p.themes?.length > 0
+                  ? <div className={styles.buildingTags}>{p.themes.map(t => <span key={t} className={styles.buildingTag}>{t}</span>)}</div>
+                  : <div className={styles.buildingTagRow}>
+                      <div className={`${styles.shimmer} ${styles.shimmerTag}`} />
+                      <div className={`${styles.shimmer} ${styles.shimmerTag}`} />
+                      <div className={`${styles.shimmer} ${styles.shimmerTag}`} />
+                    </div>}
+
+                {p.summary
+                  ? <p className={styles.buildingSummary}>{p.summary}</p>
+                  : <div className={styles.shimmerBlock}>
+                      <div className={`${styles.shimmer} ${styles.shimmerLine}`} />
+                      <div className={`${styles.shimmer} ${styles.shimmerLine} ${styles.shimmerShort}`} />
+                    </div>}
+
+                {p.stepsStarted > 0 && (
+                  <p className={styles.buildingMeta}>Assembling sequence — {p.stepsStarted} step{p.stepsStarted !== 1 ? 's' : ''} in progress…</p>
+                )}
+              </div>
+            );
+          })()}
 
           {summary && !module && (
             <SummaryCard
