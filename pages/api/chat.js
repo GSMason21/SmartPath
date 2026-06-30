@@ -9,6 +9,20 @@ const pinecone  = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const RECENCY_CUTOFF = new Date('2021-01-01').getTime();
 const OLDEST         = new Date('2010-01-01').getTime();
 
+// Pinned sources injected first when a query matches the topic keywords.
+// Add more topics here as campaigns evolve.
+const PINNED_SOURCES = {
+  abundance: {
+    keywords: ['abundan'],
+    sources: [
+      { title: 'Lifelong Learning as Abundant Learning', url: 'https://www.gettingsmart.com/2025/04/24/lifelong-learning-as-abundant-learning-why-the-answer-to-funding-our-education-systems-might-be-to-rethink-who-they-serveby-mason-pashia/', type: 'article', date: '2025-04-24' },
+      { title: 'Choosing Abundance Despite an Instinct for Scarcity', url: 'https://www.gettingsmart.com/2025/03/18/choosing-abundance-despite-an-instinct-for-scarcity-new-experiences-and-new-models/', type: 'article', date: '2025-03-18' },
+      { title: 'Unbundled Learning', url: 'https://www.gettingsmart.com/whitepaper/unbundled-learning/', type: 'whitepaper', date: '' },
+      { title: 'Expanding Access, Value and Experiences Through Credentials', url: 'https://www.gettingsmart.com/whitepaper/expanding-access-value-and-experiences-through-credentials/', type: 'whitepaper', date: '' },
+    ],
+  },
+};
+
 const LIF_ELEMENTS = `WHY: Community Need, Mission, Vision, Values & Norms
 WHAT: Learner Portrait, Standards, Competencies, Learning Progressions, Educator & Leader Portraits
 HOW: Climate and Culture, Design Principles, Learning Experience, Instruction & Facilitation, Assessment, Professional Learning
@@ -157,7 +171,22 @@ export default async function handler(req, res) {
 
     const seenUrls = new Set();
     const sources = [];
+
+    // Inject pinned sources first for matching topics
+    const lowerQuery = query.toLowerCase();
+    for (const topic of Object.values(PINNED_SOURCES)) {
+      if (topic.keywords.some(k => lowerQuery.includes(k))) {
+        for (const s of topic.sources) {
+          const key = normalizeSourceUrl(s.url, s.type);
+          if (!seenUrls.has(key)) { seenUrls.add(key); sources.push(s); }
+        }
+        break;
+      }
+    }
+
+    // Fill remaining slots from Pinecone matches
     for (const m of matches) {
+      if (sources.length >= 5) break;
       const type  = m.metadata?.type || 'article';
       const url   = m.metadata?.url  || '';
       const key   = normalizeSourceUrl(url, type);
@@ -169,7 +198,6 @@ export default async function handler(req, res) {
         type,
         date:  m.metadata?.date ? m.metadata.date.slice(0, 10) : '',
       });
-      if (sources.length === 5) break;
     }
     res.write(`data: ${JSON.stringify({ type: 'sources', sources })}\n\n`);
 
