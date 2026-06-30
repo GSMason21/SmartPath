@@ -170,7 +170,7 @@ export default async function handler(req, res) {
     let fullText = '';
     const stream = anthropic.messages.stream({
       model: 'claude-sonnet-4-6',
-      max_tokens: isNavigate ? 180 : isEmbedded ? 400 : 1024,
+      max_tokens: isNavigate ? 350 : isEmbedded ? 400 : 1024,
       system: dynamicSystem,
       messages: chatHistory,
     });
