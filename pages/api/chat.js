@@ -121,7 +121,7 @@ Return ONLY valid JSON, no explanation:
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { messages, query, pageContext, isEmbedded } = req.body;
+  const { messages, query, pageContext, isEmbedded, isNavigate } = req.body;
   if (!messages || !query) return res.status(400).json({ error: 'messages and query required' });
 
   res.setHeader('Content-Type', 'text/event-stream');
@@ -147,10 +147,13 @@ export default async function handler(req, res) {
     const contextNote = pageContext?.url
       ? `\n\nCurrent page context: The user is reading "${pageContext.title}" at ${pageContext.url}. If their question relates to this content, acknowledge it naturally and use it to inform your response.`
       : '';
-    const widgetNote = isEmbedded
+    const widgetNote = isEmbedded && !isNavigate
       ? '\n\nYou are responding inside a compact chat widget. Keep your response to 2-3 short paragraphs maximum. Be direct and conversational — one strong idea, well expressed. If there is more to explore, end with a single focused follow-up question.'
       : '';
-    const dynamicSystem = SYSTEM + contextNote + widgetNote;
+    const navigateNote = isNavigate
+      ? '\n\nYou are responding in a homepage navigation widget. Your only job is to help the person find the right content on GettingSmart.com. Write 1-3 sentences maximum — acknowledge what they are looking for, name the most relevant theme or angle, and point them toward the resources listed below. Be warm and direct. Do not lecture or provide a deep analysis. The resources will do the heavy lifting.'
+      : '';
+    const dynamicSystem = SYSTEM + contextNote + widgetNote + navigateNote;
 
     const chatHistory = messages.slice(-10).map(m => ({
       role: m.role,
@@ -167,7 +170,7 @@ export default async function handler(req, res) {
     let fullText = '';
     const stream = anthropic.messages.stream({
       model: 'claude-sonnet-4-6',
-      max_tokens: isEmbedded ? 400 : 1024,
+      max_tokens: isNavigate ? 180 : isEmbedded ? 400 : 1024,
       system: dynamicSystem,
       messages: chatHistory,
     });
@@ -181,8 +184,9 @@ export default async function handler(req, res) {
 
     res.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
 
-    // Classify LIF alignment after stream completes (non-blocking for client)
+    // Classify LIF alignment after stream completes (skip in navigate mode)
     try {
+      if (isNavigate) { res.end(); return; }
       const lifData = await classifyLIF(query, fullText);
       if (lifData?.tags?.length) {
         res.write(`data: ${JSON.stringify({ type: 'lifTags', tags: lifData.tags })}\n\n`);
