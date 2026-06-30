@@ -9,11 +9,27 @@ const SOURCE_TYPES = {
   article:    { color: '#1a7a4a', bg: '#EEFAF5', label: 'Article' },
 };
 
-const SUGGESTED = [
-  'What have you published on AI in schools?',
-  'Find me resources on project-based learning',
-  'What should I read about microschools?',
-  'Show me podcasts about student agency',
+const CAMPAIGNS = [
+  {
+    theme: 'Credentials',
+    description: 'What is the future of measuring, capturing, and communicating experience? How do we make transcripts empowering?',
+    query: 'What is Getting Smart\'s thinking on the future of credentials and transcripts?',
+  },
+  {
+    theme: 'Coherence',
+    description: 'How can systems truly transform toward a common vision?',
+    query: 'What has Getting Smart written about system coherence and transformation?',
+  },
+  {
+    theme: 'Abundance',
+    description: 'It\'s time to rethink learning as an abundant good rather than a scarce one. All learning counts, everyone is a learner, and everything is an opportunity.',
+    query: 'What does Getting Smart say about treating learning as an abundant good?',
+  },
+  {
+    theme: 'What is a Pathway?',
+    description: 'A real pathway is personalized, fluid, and helps set up a young person to navigate what\'s next with confidence.',
+    query: 'What makes a real pathway? What does Getting Smart think about personalized pathways for young people?',
+  },
 ];
 
 function renderText(text) {
@@ -55,18 +71,20 @@ function notifyHeight() {
 }
 
 export default function AskHome() {
-  const [input, setInput]     = useState('');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult]   = useState(null); // { text, sources, streaming }
-  const inputRef              = useRef(null);
+  const [input, setInput]             = useState('');
+  const [loading, setLoading]         = useState(false);
+  const [result, setResult]           = useState(null);
+  const [showCampaigns, setShowCampaigns] = useState(false);
+  const inputRef                      = useRef(null);
 
-  useEffect(() => { notifyHeight(); }, [result]);
+  useEffect(() => { notifyHeight(); }, [result, showCampaigns]);
 
   async function ask(text) {
     const query = (text || input).trim();
     if (!query || loading) return;
 
     setInput('');
+    setShowCampaigns(false);
     setLoading(true);
     setResult({ text: '', sources: [], streaming: true });
 
@@ -116,6 +134,7 @@ export default function AskHome() {
 
   function reset() {
     setResult(null);
+    setShowCampaigns(false);
     setTimeout(() => inputRef.current?.focus(), 50);
   }
 
@@ -157,13 +176,20 @@ export default function AskHome() {
           <div className={styles.idle}>
             <p className={styles.eyebrow}>Ask GS</p>
             <h2 className={styles.heading}>What do you want to learn today?</h2>
-            <div className={styles.suggested}>
-              {SUGGESTED.map(s => (
-                <button key={s} className={styles.suggestedBtn} onClick={() => ask(s)} disabled={loading}>
-                  {s}
-                </button>
-              ))}
-            </div>
+            {showCampaigns ? (
+              <div className={styles.campaigns}>
+                {CAMPAIGNS.map(c => (
+                  <button key={c.theme} className={styles.campaignCard} onClick={() => ask(c.query)} disabled={loading}>
+                    <span className={styles.campaignTheme}>{c.theme}</span>
+                    <span className={styles.campaignDesc}>{c.description}</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <button className={styles.thinkingBtn} onClick={() => setShowCampaigns(true)}>
+                What have we been thinking about lately?
+              </button>
+            )}
           </div>
         )}
 
@@ -173,7 +199,7 @@ export default function AskHome() {
               ref={inputRef}
               type="text"
               className={styles.input}
-              placeholder="e.g. What have you written about competency-based learning?"
+              placeholder="Ask anything about learning innovation..."
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
