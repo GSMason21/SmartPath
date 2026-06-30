@@ -113,7 +113,7 @@ export default function AskHome() {
     const query = (text || input).trim();
     if (!query || loading) return;
 
-    relayEvent('ask_gs_query', { event_label: query, query_length: query.length, source: SOURCE });
+    relayEvent('ask_gs_query', { search_term: query, query_length: query.length, source: SOURCE });
     trackAskGSQuery(query, SOURCE);
     if (campaignTheme) {
       relayEvent('ask_gs_campaign_click', { theme: campaignTheme, source: SOURCE });
