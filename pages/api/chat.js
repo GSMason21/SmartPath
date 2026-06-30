@@ -136,12 +136,41 @@ export default async function handler(req, res) {
     const { context, matches, semanticQuery } = await retrieveContext(query, podcastIntent);
     console.log(`[/api/chat] query="${query}" semantic="${semanticQuery}" matches=${matches.length}`);
 
-    const sources = matches.slice(0, 5).map(m => ({
-      title: m.metadata?.title || '',
-      url:   m.metadata?.url   || '',
-      type:  m.metadata?.type  || 'article',
-      date:  m.metadata?.date  ? m.metadata.date.slice(0, 10) : '',
-    }));
+    // Deduplicate sources by normalized URL — collapse multiple chunks from
+    // the same whitepaper (or any post) down to one card for the parent page.
+    function normalizeSourceUrl(url, type) {
+      if (!url) return url;
+      try {
+        const u = new URL(url);
+        u.hash = '';
+        u.search = '';
+        // Strip pagination (/page/2/, etc.)
+        u.pathname = u.pathname.replace(/\/page\/\d+\/?$/, '/');
+        // For whitepapers keep only /whitepaper/slug/ — drop any deeper path segments
+        if (type === 'whitepaper') {
+          const parts = u.pathname.split('/').filter(Boolean);
+          if (parts.length > 2) u.pathname = '/' + parts.slice(0, 2).join('/') + '/';
+        }
+        return u.toString();
+      } catch { return url; }
+    }
+
+    const seenUrls = new Set();
+    const sources = [];
+    for (const m of matches) {
+      const type  = m.metadata?.type || 'article';
+      const url   = m.metadata?.url  || '';
+      const key   = normalizeSourceUrl(url, type);
+      if (key && seenUrls.has(key)) continue;
+      if (key) seenUrls.add(key);
+      sources.push({
+        title: m.metadata?.title || '',
+        url:   key || url,
+        type,
+        date:  m.metadata?.date ? m.metadata.date.slice(0, 10) : '',
+      });
+      if (sources.length === 5) break;
+    }
     res.write(`data: ${JSON.stringify({ type: 'sources', sources })}\n\n`);
 
     const contextNote = pageContext?.url
