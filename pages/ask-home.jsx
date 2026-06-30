@@ -71,7 +71,7 @@ function renderText(text) {
   return parts;
 }
 
-function SourceCard({ source }) {
+function SourceCard({ source, searchTerm }) {
   const t = SOURCE_TYPES[source.type] || SOURCE_TYPES.article;
   if (!source.url) return null;
   return (
@@ -81,7 +81,7 @@ function SourceCard({ source }) {
       rel="noopener noreferrer"
       className={styles.sourceCard}
       onClick={() => {
-        relayEvent('ask_gs_source_click', { source_title: source.title, source_type: source.type, source: SOURCE });
+        relayEvent('ask_gs_source_click', { source_title: source.title, source_type: source.type, search_term: searchTerm, source: SOURCE });
         trackAskGSSourceClick(source.title, source.type, SOURCE);
       }}
     >
@@ -105,6 +105,7 @@ export default function AskHome() {
   const [loading, setLoading]         = useState(false);
   const [result, setResult]           = useState(null);
   const [showCampaigns, setShowCampaigns] = useState(false);
+  const [lastQuery, setLastQuery]     = useState('');
   const inputRef                      = useRef(null);
 
   useEffect(() => { notifyHeight(); }, [result, showCampaigns]);
@@ -121,6 +122,7 @@ export default function AskHome() {
     }
 
     setInput('');
+    setLastQuery(query);
     setShowCampaigns(false);
     setLoading(true);
     setResult({ text: '', sources: [], streaming: true });
@@ -196,7 +198,7 @@ export default function AskHome() {
 
             {result.sources.length > 0 && (
               <div className={styles.sources}>
-                {result.sources.slice(0, 4).map((s, i) => <SourceCard key={i} source={s} />)}
+                {result.sources.slice(0, 4).map((s, i) => <SourceCard key={i} source={s} searchTerm={lastQuery} />)}
               </div>
             )}
 
