@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from '../styles/AskHome.module.css';
 
 const SOURCE_TYPES = {
@@ -48,11 +48,19 @@ function SourceCard({ source }) {
   );
 }
 
+function notifyHeight() {
+  if (window.self === window.top) return;
+  const h = document.documentElement.scrollHeight;
+  window.parent.postMessage({ type: 'gs-ask-resize', height: h }, '*');
+}
+
 export default function AskHome() {
   const [input, setInput]     = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult]   = useState(null); // { text, sources, streaming }
   const inputRef              = useRef(null);
+
+  useEffect(() => { notifyHeight(); }, [result]);
 
   async function ask(text) {
     const query = (text || input).trim();
