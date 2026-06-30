@@ -1,6 +1,27 @@
 import Head from 'next/head';
 import { useState, useRef, useEffect } from 'react';
 import styles from '../styles/AskHome.module.css';
+import {
+  trackAskGSQuery,
+  trackAskGSCampaignReveal,
+  trackAskGSCampaignClick,
+  trackAskGSSourceClick,
+  trackAskGSDeeperClick,
+} from '../lib/analytics';
+
+const SOURCE = 'homepage_embed';
+
+// Relay analytics events to the parent page via postMessage so they fire
+// in the gettingsmart.com GA4 context rather than the tools subdomain.
+function relayEvent(eventName, params = {}) {
+  if (typeof window === 'undefined') return;
+  // Fire directly if loaded outside an iframe (e.g. preview)
+  if (window.self === window.top && window.gtag) {
+    window.gtag('event', eventName, params);
+    return;
+  }
+  window.parent.postMessage({ type: 'gs-analytics', event: eventName, params }, '*');
+}
 
 const SOURCE_TYPES = {
   podcast:    { color: '#c45e2a', bg: '#FDF3EE', label: 'Podcast' },
@@ -54,7 +75,16 @@ function SourceCard({ source }) {
   const t = SOURCE_TYPES[source.type] || SOURCE_TYPES.article;
   if (!source.url) return null;
   return (
-    <a href={source.url} target="_blank" rel="noopener noreferrer" className={styles.sourceCard}>
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={styles.sourceCard}
+      onClick={() => {
+        relayEvent('ask_gs_source_click', { source_title: source.title, source_type: source.type, source: SOURCE });
+        trackAskGSSourceClick(source.title, source.type, SOURCE);
+      }}
+    >
       <span className={styles.sourceType} style={{ background: t.bg, color: t.color }}>{t.label}</span>
       <span className={styles.sourceTitle}>{source.title}</span>
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={styles.sourceArrow} aria-hidden="true">
@@ -79,9 +109,16 @@ export default function AskHome() {
 
   useEffect(() => { notifyHeight(); }, [result, showCampaigns]);
 
-  async function ask(text) {
+  async function ask(text, campaignTheme) {
     const query = (text || input).trim();
     if (!query || loading) return;
+
+    relayEvent('ask_gs_query', { query_length: query.length, source: SOURCE });
+    trackAskGSQuery(query, SOURCE);
+    if (campaignTheme) {
+      relayEvent('ask_gs_campaign_click', { theme: campaignTheme, source: SOURCE });
+      trackAskGSCampaignClick(campaignTheme, SOURCE);
+    }
 
     setInput('');
     setShowCampaigns(false);
@@ -166,7 +203,16 @@ export default function AskHome() {
             {!result.streaming && (
               <div className={styles.resultActions}>
                 <button className={styles.askAgain} onClick={reset}>Ask another question</button>
-                <a href="https://tools.gettingsmart.com/ask" target="_blank" rel="noopener noreferrer" className={styles.deeperLink}>
+                <a
+                  href="https://tools.gettingsmart.com/ask"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.deeperLink}
+                  onClick={() => {
+                    relayEvent('ask_gs_deeper_click', { source: SOURCE });
+                    trackAskGSDeeperClick(SOURCE);
+                  }}
+                >
                   Explore deeper with Ask GS →
                 </a>
               </div>
@@ -179,7 +225,7 @@ export default function AskHome() {
             {showCampaigns ? (
               <div className={styles.campaigns}>
                 {CAMPAIGNS.map(c => (
-                  <button key={c.theme} className={styles.campaignCard} onClick={() => ask(c.query)} disabled={loading}>
+                  <button key={c.theme} className={styles.campaignCard} onClick={() => ask(c.query, c.theme)} disabled={loading}>
                     <span className={styles.campaignTheme}>{c.theme}</span>
                     <span className={styles.campaignDesc}>{c.description}</span>
                   </button>
@@ -189,7 +235,11 @@ export default function AskHome() {
               <p className={styles.prompt}>
                 Feel free to ask us any question or search any topic related to learning, leadership, or community.{' '}
                 Not sure what to ask?{' '}
-                <button className={styles.thinkingBtn} onClick={() => setShowCampaigns(true)}>
+                <button className={styles.thinkingBtn} onClick={() => {
+                  relayEvent('ask_gs_campaign_reveal', { source: SOURCE });
+                  trackAskGSCampaignReveal(SOURCE);
+                  setShowCampaigns(true);
+                }}>
                   Check out what we&rsquo;ve been thinking about lately.
                 </button>
               </p>
