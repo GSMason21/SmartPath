@@ -15,12 +15,12 @@ const SOURCE = 'homepage_embed';
 // in the gettingsmart.com GA4 context rather than the tools subdomain.
 function relayEvent(eventName, params = {}) {
   if (typeof window === 'undefined') return;
-  // Fire directly if loaded outside an iframe (e.g. preview)
+  const payload = { event_category: 'tools', ...params };
   if (window.self === window.top && window.gtag) {
-    window.gtag('event', eventName, params);
+    window.gtag('event', eventName, payload);
     return;
   }
-  window.parent.postMessage({ type: 'gs-analytics', event: eventName, params }, '*');
+  window.parent.postMessage({ type: 'gs-analytics', event: eventName, params: payload }, '*');
 }
 
 const SOURCE_TYPES = {
