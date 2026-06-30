@@ -186,9 +186,13 @@ export default function AskHome() {
                 ))}
               </div>
             ) : (
-              <button className={styles.thinkingBtn} onClick={() => setShowCampaigns(true)}>
-                What have we been thinking about lately?
-              </button>
+              <p className={styles.prompt}>
+                Feel free to ask us any question or search any topic related to learning, leadership, or community.{' '}
+                Not sure what to ask?{' '}
+                <button className={styles.thinkingBtn} onClick={() => setShowCampaigns(true)}>
+                  Check out what we&rsquo;ve been thinking about lately.
+                </button>
+              </p>
             )}
           </div>
         )}
